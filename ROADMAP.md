@@ -9,7 +9,7 @@
 | :--- | :------------ | :--- | :------------------------------------- | :----- |
 | 0    | Monorepo 骨架 | -    | `pnpm -r build` 全绿，hooks 生效       | 已完成 |
 | 1    | 数据层建模    | 0    | migrate 建表成功，seed 数据可查        | 已完成 |
-| 2    | 后端底座      | 1    | 服务启动；无租户上下文查询抛错         | 未开始 |
+| 2    | 后端底座      | 1    | 服务启动；无租户上下文查询抛错         | 已完成 |
 | 3    | 鉴权模块      | 2    | curl 登录拿 token，错 token 返回 40001 | 未开始 |
 | 4    | 积分核心      | 2    | 100 并发扣减不超发，同 bizId 只扣一次  | 未开始 |
 | 5    | AI 中台       | 4    | curl 收到 SSE chunk + done 事件        | 未开始 |
@@ -55,12 +55,12 @@
 
 **任务**：
 
-- [ ] Express + TS 分层骨架：middleware/ + modules/*/（routes → controller → service）
-- [ ] 全局错误处理 + 统一响应拦截 `{ code, message, data }`
-- [ ] tenantStorage（AsyncLocalStorage）+ tenantMiddleware（第 5.1/5.2 节）
-- [ ] Prisma 租户扩展，自动注入 tenantId（第 5.3 节）
-- [ ] pino 日志、zod 校验、ioredis 客户端接入
-- [ ] 绕过测试：无上下文查询租户表必须抛错
+- [x] Express + TS 分层骨架：middleware/ + modules/*/（routes → controller → service）
+- [x] 全局错误处理 + 统一响应拦截 `{ code, message, data }`
+- [x] tenantStorage（AsyncLocalStorage）+ tenantMiddleware（第 5.1/5.2 节）
+- [x] Prisma 租户扩展，自动注入 tenantId（第 5.3 节）
+- [x] pino 日志、zod 校验、ioredis 客户端接入
+- [x] 绕过测试：无上下文查询租户表必须抛错
 
 **完成标准**：服务可启动；租户扩展强制注入生效。
 **提交**：`feat: 阶段2 后端底座与多租户中间件`
