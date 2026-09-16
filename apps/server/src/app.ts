@@ -8,6 +8,7 @@ import { pinoHttp } from 'pino-http';
 import { logger } from './common/logger.js';
 import { tenantMiddleware } from './middleware/tenant.js';
 import { errorHandler, notFoundHandler } from './middleware/error-handler.js';
+import { authRoutes } from './modules/auth/auth.routes.js';
 import { healthRoutes } from './modules/health/health.routes.js';
 
 export function createApp(): Express {
@@ -19,6 +20,7 @@ export function createApp(): Express {
 
   // 业务路由（各阶段完成一个模块在此追加挂载）
   app.use('/api/health', healthRoutes);
+  app.use('/api/auth', authRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

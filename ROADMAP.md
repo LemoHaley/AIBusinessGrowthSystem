@@ -10,7 +10,7 @@
 | 0    | Monorepo 骨架 | -    | `pnpm -r build` 全绿，hooks 生效       | 已完成 |
 | 1    | 数据层建模    | 0    | migrate 建表成功，seed 数据可查        | 已完成 |
 | 2    | 后端底座      | 1    | 服务启动；无租户上下文查询抛错         | 已完成 |
-| 3    | 鉴权模块      | 2    | curl 登录拿 token，错 token 返回 40001 | 未开始 |
+| 3    | 鉴权模块      | 2    | curl 登录拿 token，错 token 返回 40001 | 已完成 |
 | 4    | 积分核心      | 2    | 100 并发扣减不超发，同 bizId 只扣一次  | 未开始 |
 | 5    | AI 中台       | 4    | curl 收到 SSE chunk + done 事件        | 未开始 |
 | 6    | 业务闭环      | 5    | 一次生成落三表记录；parent 越权被拦    | 未开始 |
@@ -69,11 +69,11 @@
 
 **任务**：
 
-- [ ] issueTokens / verifyAccessToken（第 5.5 节代码，type 声明防混用）
-- [ ] 小程序登录：code2session → 查/建 user → 签发 JWT
-- [ ] 后台账号密码登录（bcrypt + JWT）
-- [ ] refresh token（Redis 存储，刷新校验一致性，登出吊销）
-- [ ] RBAC 守卫 requireRole（第 5.4 节）
+- [x] issueTokens / verifyAccessToken（第 5.5 节代码，type 声明防混用）
+- [x] 小程序登录：code2session → 查/建 user → 签发 JWT
+- [x] 后台账号密码登录（bcrypt + JWT）
+- [x] refresh token（Redis 存储，刷新校验一致性，登出吊销）
+- [x] RBAC 守卫 requireRole（第 5.4 节）
 
 **完成标准**：登录接口返回 token；`/api/auth/me` 正常；错 token 40001；低角色访问高权限接口 40003。
 **提交**：`feat: 阶段3 认证鉴权与RBAC`
