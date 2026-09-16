@@ -7,7 +7,7 @@
 
 | 阶段 | 名称          | 前置 | 完成标准                               | 状态   |
 | :--- | :------------ | :--- | :------------------------------------- | :----- |
-| 0    | Monorepo 骨架 | -    | `pnpm -r build` 全绿，hooks 生效       | 进行中 |
+| 0    | Monorepo 骨架 | -    | `pnpm -r build` 全绿，hooks 生效       | 已完成 |
 | 1    | 数据层建模    | 0    | migrate 建表成功，seed 数据可查        | 未开始 |
 | 2    | 后端底座      | 1    | 服务启动；无租户上下文查询抛错         | 未开始 |
 | 3    | 鉴权模块      | 2    | curl 登录拿 token，错 token 返回 40001 | 未开始 |
@@ -29,12 +29,12 @@
 
 **任务**：
 
-- [ ] pnpm workspace：`pnpm-workspace.yaml`（apps/* + packages/*）
-- [ ] `packages/shared`：TS 包，三端共享类型/常量（可构建）
-- [ ] `apps/server`：TS 严格模式骨架，最简启动入口（可构建）
-- [ ] `apps/admin`、`apps/miniapp`：占位包（阶段 8/9 再初始化脚手架）
-- [ ] 根级 ESLint 9（扁平配置 + typescript-eslint）、Prettier
-- [ ] Husky：pre-commit 跑 lint-staged；commit-msg 跑 commitlint（Conventional Commits）
+- [x] pnpm workspace：`pnpm-workspace.yaml`（apps/* + packages/*）
+- [x] `packages/shared`：TS 包，三端共享类型/常量（可构建）
+- [x] `apps/server`：TS 严格模式骨架，最简启动入口（可构建）
+- [x] `apps/admin`、`apps/miniapp`：占位包（阶段 8/9 再初始化脚手架）
+- [x] 根级 ESLint 9（扁平配置 + typescript-eslint）、Prettier
+- [x] Husky：pre-commit 跑 lint-staged；commit-msg 跑 commitlint（Conventional Commits）
 
 **完成标准**：`pnpm install` 成功；`pnpm -r build` 通过；`pnpm lint` 通过；首次 commit 触发两个 hooks。
 
