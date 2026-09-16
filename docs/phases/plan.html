@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ArtEdu AI 经营增长系统 MVP 开发计划</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
+<style>
+  :root {
+    --bg: #f6f8fa;
+    --panel: #ffffff;
+    --text: #1f2328;
+    --muted: #57606a;
+    --border: #d0d7de;
+    --accent: #2563eb;
+    --accent-soft: #eff4ff;
+    --code-bg: #f6f8fa;
+    --sidebar-w: 280px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+      "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+  #sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: var(--sidebar-w);
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 20px 14px 40px;
+  }
+  #sidebar .brand {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--accent);
+    margin-bottom: 4px;
+    padding: 0 8px;
+  }
+  #sidebar .brand-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding: 0 8px;
+  }
+  #toc a {
+    display: block;
+    text-decoration: none;
+    color: var(--muted);
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    border-left: 2px solid transparent;
+  }
+  #toc a:hover { background: var(--accent-soft); color: var(--accent); }
+  #toc a.lvl-h1 { font-weight: 700; color: var(--text); font-size: 14px; }
+  #toc a.lvl-h2 { padding-left: 18px; }
+  #toc a.lvl-h3 { padding-left: 32px; font-size: 12.5px; }
+  #toc a.active { background: var(--accent-soft); color: var(--accent); border-left-color: var(--accent); }
+  #content {
+    margin-left: var(--sidebar-w);
+    padding: 32px 48px 120px;
+    max-width: 1080px;
+  }
+  #content h1 {
+    font-size: 30px;
+    margin: 0 0 24px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--border);
+  }
+  #content h2 {
+    font-size: 23px;
+    margin: 44px 0 18px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  #content h3 { font-size: 18px; margin: 28px 0 12px; color: #24292f; }
+  #content h4 { font-size: 15px; margin: 18px 0 8px; color: #24292f; }
+  #content p { margin: 10px 0; }
+  #content a { color: var(--accent); }
+  #content ul, #content ol { padding-left: 24px; }
+  #content li { margin: 4px 0; }
+  #content blockquote {
+    margin: 14px 0;
+    padding: 10px 16px;
+    border-left: 4px solid var(--accent);
+    background: var(--accent-soft);
+    color: #334155;
+    border-radius: 0 6px 6px 0;
+  }
+  #content code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-size: 13px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  #content pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+  #content pre code {
+    background: transparent;
+    padding: 0;
+    font-size: 13px;
+  }
+  #content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    font-size: 13.5px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  #content thead { background: #eef2f7; }
+  #content th, #content td {
+    border: 1px solid var(--border);
+    padding: 9px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  #content th { font-weight: 600; color: #24292f; }
+  #content tbody tr:nth-child(even) { background: #fafbfc; }
+  #content hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+  #content .mermaid {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    margin: 18px 0;
+    text-align: center;
+    overflow-x: auto;
+  }
+  .topbar {
+    position: fixed; top: 0; right: 0;
+    margin-left: var(--sidebar-w);
+    width: calc(100% - var(--sidebar-w));
+    height: 0;
+  }
+  #backTop {
+    position: fixed;
+    right: 28px; bottom: 28px;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    box-shadow: 0 4px 14px rgba(37,99,235,.35);
+    display: none;
+    z-index: 50;
+  }
+  @media (max-width: 980px) {
+    #sidebar { transform: translateX(-100%); transition: transform .25s; }
+    #sidebar.open { transform: none; }
+    #content { margin-left: 0; padding: 24px 18px 80px; }
+    #menuBtn { display: block; }
+  }
+  #menuBtn {
+    display: none;
+    position: fixed; top: 12px; left: 12px; z-index: 60;
+    background: var(--accent); color: #fff; border: none;
+    border-radius: 8px; padding: 8px 12px; cursor: pointer; font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<button id="menuBtn">菜单</button>
+<div id="sidebar">
+  <div class="brand">ArtEdu AI Growth</div>
+  <div class="brand-sub">MVP 开发计划（优化版）</div>
+  <nav id="toc"></nav>
+</div>
+<main id="content"></main>
+<button id="backTop" title="回到顶部">↑</button>
+
+<script>
+  const RAW = "# ArtEdu AI 经营增长系统 MVP 开发计划（优化版）\n\n> 本文件是项目的开发蓝图（System Prompt + Roadmap），供 AI IDE（Cursor / Windsurf / Claude Code / Trae）直接读取执行。\n> 文件位于项目根目录 `plan.md`，是所有开发任务的唯一事实来源（Single Source of Truth）。\n\n---\n\n## 0. 项目概览\n\n- **项目名称**：ArtEdu AI Growth System（舞蹈/艺术教培 AI 经营增长系统）\n- **项目定位**：面向舞蹈/艺术教培机构的多租户 AI SaaS 系统，通过 AI 辅助机构生成课后点评、成长报告、招生文案、家长沟通话术，提升续费率与招生效率。\n- **MVP 周期**：30 - 45 天（6 周）\n- **MVP 形态**：微信小程序（家长/学员端）+ Web 管理后台（机构端）+ AI SaaS 中台（后端）\n- **MVP 范围锁定**：机构管理后台 + 小程序 AI 点评/报告 + 积分计费 + RAG 知识库，其余全部二期\n- **开发模式**：AI IDE 辅助全栈开发，人工负责架构决策、AI 调优、真实客户对接\n\n---\n\n## 1. 系统架构设计\n\n### 1.1 总体架构图\n\n```mermaid\nflowchart TB\n    MP[\"微信小程序<br/>(uni-app + Vue3)<br/>家长/学员端\"]\n    AD[\"Web 管理后台<br/>(Vue3 + Element Plus)<br/>机构端\"]\n\n    subgraph gateway[\"接入层\"]\n        NG[\"Nginx<br/>HTTPS 终端 / SSE 透传 / 静态资源\"]\n    end\n\n    subgraph server[\"应用层 apps/server (Express + TS)\"]\n        MW[\"中间件层<br/>JWT 鉴权 / 多租户注入 / RBAC / 限流 / 全局异常\"]\n        subgraph modules[\"业务模块\"]\n            AUTH[\"认证 auth\"]\n            TENANT[\"租户 tenant\"]\n            USER[\"用户 user\"]\n            STU[\"学员/班级 student\"]\n            RPT[\"报告 report\"]\n            PTS[\"积分计费 points\"]\n            AI[\"AI 中台 ai\"]\n            KB[\"知识库 knowledge\"]\n            FILE[\"文件 file\"]\n        end\n        JOBS[\"BullMQ 异步任务<br/>流水落库 / 定时对账 / 失败重试\"]\n    end\n\n    subgraph infra[\"基础设施\"]\n        MYSQL[(\"MySQL 8.0<br/>业务数据 / 积分流水\")]\n        REDIS[(\"Redis 7<br/>积分热点账本 / 幂等锁 / 限流\")]\n        OSS[\"阿里云 OSS<br/>图片 / 视频 / RAG 文档\"]\n    end\n\n    subgraph aisvc[\"AI 服务（第三方）\"]\n        COZE[\"Coze API<br/>(首选)\"]\n        DIFY[\"Dify API<br/>(备选)\"]\n        LLM[\"OpenAI / DeepSeek<br/>(兜底直连)\"]\n    end\n\n    MP --> NG\n    AD --> NG\n    NG --> MW\n    MW --> AUTH & TENANT & USER & STU & RPT & PTS & AI & KB & FILE\n    AUTH --> MYSQL\n    TENANT & USER & STU & RPT --> MYSQL\n    PTS --> REDIS\n    JOBS --> MYSQL\n    JOBS --> REDIS\n    AI --> COZE & DIFY & LLM\n    KB --> COZE & DIFY\n    FILE --> OSS\n```\n\n### 1.2 请求链路与分层约定\n\n```\n请求 → Nginx → Express 中间件链(auth → tenant → rbac → ratelimit) → Router → Controller → Service → Prisma\n```\n\n| 层             | 职责                                          | 约定                 |\n| :------------- | :-------------------------------------------- | :------------------- |\n| **middleware** | 鉴权、租户上下文注入、角色守卫、限流          | 不写业务逻辑         |\n| **controller** | 参数解析与校验（zod）、调用 service、组装响应 | 薄层，不含业务       |\n| **service**    | 业务逻辑、事务编排、AI/积分调用               | 唯一写业务的地方     |\n| **prisma**     | 数据访问，经租户扩展自动注入 tenantId         | 禁止绕过扩展手写 SQL |\n\n### 1.3 统一响应与错误码\n\n```json\n// 成功\n{ \"code\": 0, \"message\": \"ok\", \"data\": {} }\n// 失败\n{ \"code\": 40901, \"message\": \"积分余额不足\", \"data\": null }\n```\n\n| 错误码 | 说明                 |\n| :----- | :------------------- |\n| 0      | 成功                 |\n| 40001  | 未登录或 token 失效  |\n| 40003  | 无权限（角色不足）   |\n| 40004  | 参数校验失败         |\n| 40404  | 资源不存在           |\n| 40901  | 积分余额不足         |\n| 40902  | 重复请求（幂等拦截） |\n| 50000  | 服务器内部错误       |\n| 50901  | AI 服务调用失败      |\n\n---\n\n## 2. 技术栈选型\n\n| 层级                | 技术选型                                               | 说明                                                                                            |\n| :------------------ | :----------------------------------------------------- | :---------------------------------------------------------------------------------------------- |\n| **后端 API + 中台** | Node.js (Express 4 + TypeScript)                       | REST API、SSE 流式输出、AI 调用、积分扣减                                                       |\n| **ORM**             | Prisma 5                                               | schema 即文档，迁移由 `prisma migrate` 管理                                                     |\n| **参数校验**        | zod                                                    | 请求体/查询参数校验，与 TS 类型联动                                                             |\n| **Web 管理后台**    | Vue 3 + Vite + Element Plus + Pinia + Vue Router       | 机构端管理界面                                                                                  |\n| **微信小程序**      | uni-app + Vue 3 + Pinia                                | 家长/学员端                                                                                     |\n| **数据库**          | MySQL 8.0                                              | 租户、用户、学员、积分流水、AI 日志                                                             |\n| **缓存/原子操作**   | Redis 7 (ioredis) + Lua 脚本                           | 积分并发扣减、限流、幂等锁、refresh token                                                       |\n| **AI 能力**         | Coze / Dify API（首选）+ OpenAI / DeepSeek API（备用） | Agent、RAG 知识库、流式输出                                                                     |\n| **文件存储**        | 阿里云 OSS（multer 直传）                              | 图片、视频、RAG 文档                                                                            |\n| **异步任务**        | BullMQ（基于 Redis）                                   | 异步 AI 生成、积分对账、失败重试                                                                |\n| **日志**            | pino + pino-http                                       | 结构化 JSON 日志输出到 stdout，由 Docker 日志驱动收集；生产可选接入阿里云 SLS 或 Loki + Grafana |\n| **部署**            | Docker + Docker Compose + Nginx                        | 一键部署                                                                                        |\n| **代码规范**        | ESLint + Prettier + Husky + Commitlint                 | 统一代码风格                                                                                    |\n\n---\n\n## 3. 项目目录结构（Monorepo）\n\n```text\nart-edu-ai/\n├── apps/\n│   ├── server/                       # Express + Prisma 后端 + AI SaaS 中台\n│   │   ├── src/\n│   │   │   ├── config/               # 环境配置加载（dotenv + zod 校验）\n│   │   │   ├── middleware/           # auth / tenant / rbac / rateLimit / errorHandler\n│   │   │   ├── modules/\n│   │   │   │   ├── auth/             # 登录鉴权（微信 + 后台）：routes + controller + service\n│   │   │   │   ├── tenant/           # 租户管理\n│   │   │   │   ├── user/             # 用户/老师/家长管理\n│   │   │   │   ├── student/          # 学员档案 + 班级\n│   │   │   │   ├── ai/               # AI 中台\n│   │   │   │   │   ├── providers/    # AiProvider 抽象 + coze/dify/openai 适配器\n│   │   │   │   │   ├── prompts/      # Prompt 模板（按 agentType 组织）\n│   │   │   │   │   └── sse.ts        # SSE 响应封装\n│   │   │   │   ├── points/           # 积分账本（Lua 原子扣减、失败回滚）\n│   │   │   │   ├── knowledge/        # RAG 知识库\n│   │   │   │   ├── file/             # 文件上传（multer → OSS）\n│   │   │   │   └── report/           # AI 报告与点评\n│   │   │   ├── jobs/                 # BullMQ 队列 + 定时对账任务\n│   │   │   ├── common/               # prisma(租户扩展) / redis / logger / tenantContext\n│   │   │   ├── app.ts                # Express 实例 + 中间件挂载\n│   │   │   └── main.ts               # 启动入口\n│   │   ├── prisma/\n│   │   │   ├── schema.prisma         # 数据模型（由第 4 节 DDL 转换）\n│   │   │   └── migrations/           # 迁移文件\n│   │   ├── scripts/\n│   │   │   └── lua/                  # 积分扣减 Lua 脚本\n│   │   └── package.json\n│   ├── admin/                        # Web 管理后台（Vue 3 + Vite）\n│   │   ├── src/\n│   │   │   ├── views/                # 页面（登录/学员/AI助手/知识库/积分/看板）\n│   │   │   ├── components/\n│   │   │   ├── api/                  # axios 封装 + 接口定义\n│   │   │   ├── stores/               # Pinia\n│   │   │   └── router/               # 路由 + 守卫\n│   │   └── package.json\n│   └── miniapp/                      # 微信小程序（uni-app + Vue 3）\n│       ├── src/\n│       │   ├── pages/                # 首页/对话/报告/积分/我的\n│       │   ├── components/\n│       │   ├── api/                  # request 封装（含 SSE 分块接收）\n│       │   ├── stores/\n│       │   └── manifest.json / pages.json\n│       └── package.json\n├── packages/\n│   └── shared/                       # 共享 TS 类型、常量、工具函数（三端复用）\n├── docker-compose.yml\n├── .env.example\n└── plan.md\n```\n\n---\n\n## 4. 数据库设计（MySQL）\n\n> AI IDE 直接读取此 DDL 转换为 `prisma/schema.prisma`，通过 `prisma migrate dev` 建表。\n> 所有租户维度表必须带 `tenant_id`，由第 5 节的 Prisma 租户扩展自动注入。\n>\n> 索引设计要点：`point_ledger` 的 `uk_biz (tenant_id, biz_id, change_type)` 是幂等性的最后一道防线——即使 Redis 幂等锁失效（Redis 故障、锁过期后重试），数据库唯一约束也会拒绝重复流水写入，从根源上保证不超发。\n\n```sql\n-- 1. 租户表（机构）\nCREATE TABLE tenants (\n    id BIGINT PRIMARY KEY AUTO_INCREMENT,\n    name VARCHAR(128) NOT NULL COMMENT '机构名称',\n    logo VARCHAR(255) COMMENT '机构 Logo',\n    contact VARCHAR(64) COMMENT '联系方式',\n    expire_at DATETIME COMMENT '服务到期时间（SaaS 试用期管理）',\n    status TINYINT DEFAULT 1 COMMENT '1:正常 0:禁用',\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n);\n\n-- 2. 用户表（机构管理员、老师、家长）\nCREATE TABLE users (\n    id BIGINT PRIMARY KEY AUTO_INCREMENT,\n    tenant_id BIGINT NOT NULL COMMENT '所属租户',\n    openid VARCHAR(64) COMMENT '微信 openid',\n    phone VARCHAR(20),\n    nickname VARCHAR(64),\n    avatar VARCHAR(255),\n    password VARCHAR(128) COMMENT '后台登录密码（bcrypt，仅 admin/teacher）',\n    role ENUM('admin', 'teacher', 'parent') NOT NULL DEFAULT 'parent',\n    status TINYINT DEFAULT 1,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n    UNIQUE KEY uk_tenant_openid (tenant_id, openid),\n    INDEX idx_tenant_role (tenant_id, role)\n);\n\n-- 3. 班级表\nCREATE TABLE classes (\n    id BIGINT PRIMARY KEY AUTO_INCREMENT,\n    tenant_id BIGINT NOT NULL,\n    name VARCHAR(64) NOT NULL COMMENT '班级名称',\n    teacher_id BIGINT COMMENT '负责老师',\n    status TINYINT DEFAULT 1,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n    INDEX idx_tenant (tenant_id)\n);\n\n-- 4. 学员表\nCREATE TABLE students (\n    id BIGINT PRIMARY KEY AUTO_INCREMENT,\n    tenant_id BIGINT NOT NULL,\n    name VARCHAR(64) NOT NULL,\n    parent_user_id BIGINT COMMENT '关联家长用户',\n    class_id BIGINT COMMENT '所属班级',\n    level VARCHAR(32) COMMENT '级别',\n    status TINYINT DEFAULT 1,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n    INDEX idx_tenant_class (tenant_id, class_id),\n    INDEX idx_parent (parent_user_id)\n);\n\n-- 5. 积分账户表\nCREATE TABLE point_accounts (\n    id BIGINT PRIMARY KEY AUTO_INCREMENT,\n    tenant_id BIGINT NOT NULL,\n    user_id BIGINT NOT NULL,\n    balance INT NOT NULL DEFAULT 0 COMMENT '可用余额',\n    version INT DEFAULT 0 COMMENT '乐观锁',\n    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n    UNIQUE KEY uk_tenant_user (tenant_id, user_id)\n);\n\n-- 6. 积分流水表（核心账本，只增不改）\nCREATE TABLE point_ledger (\n    id BIGINT PRIMARY KEY AUTO_INCREMENT,\n    tenant_id BIGINT NOT NULL,\n    user_id BIGINT NOT NULL,\n    change_type ENUM('recharge', 'consume', 'rollback') NOT NULL COMMENT 'MVP 无预扣，失败走 rollback 反向流水；freeze/unfreeze 留待二期',\n    change_amount INT NOT NULL COMMENT '正数增加，负数减少',\n    balance_after INT NOT NULL COMMENT '变更后余额快照',\n    biz_id VARCHAR(64) NOT NULL COMMENT '业务单号（幂等键）',\n    biz_type VARCHAR(32) COMMENT '业务类型：ai_report, ai_chat, recharge 等',\n    remark VARCHAR(255),\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    UNIQUE KEY uk_biz (tenant_id, biz_id, change_type),\n    INDEX idx_tenant_user_time (tenant_id, user_id, created_at)\n);\n\n-- 7. 计费配置表（AI 调用单价）\nCREATE TABLE point_prices (\n    id BIGINT PRIMARY KEY AUTO_INCREMENT,\n    agent_type VARCHAR(32) NOT NULL COMMENT 'agent 类型：report/copywriting/chat',\n    price INT NOT NULL COMMENT '每次调用消耗积分',\n    tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '0 表示全局默认价，非 0 为租户自定义价（不用 NULL：MySQL 唯一索引对 NULL 不去重）',\n    status TINYINT DEFAULT 1,\n    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n    UNIQUE KEY uk_agent_tenant (agent_type, tenant_id)\n);\n\n-- 8. AI Agent 配置表（可在线切换 provider/bot，无需重新部署）\nCREATE TABLE agent_configs (\n    id BIGINT PRIMARY KEY AUTO_INCREMENT,\n    agent_type VARCHAR(32) NOT NULL COMMENT 'report/copywriting/chat',\n    provider ENUM('coze', 'dify', 'openai') NOT NULL DEFAULT 'coze',\n    bot_id VARCHAR(128) COMMENT 'Coze bot id / Dify app id',\n    model VARCHAR(64) COMMENT 'OpenAI/DeepSeek 模型名',\n    prompt_template TEXT COMMENT '系统 Prompt 模板（支持变量插值）',\n    tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '0 表示全局默认配置（不用 NULL：MySQL 唯一索引对 NULL 不去重）',\n    status TINYINT DEFAULT 1,\n    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n    UNIQUE KEY uk_agent_tenant (agent_type, tenant_id)\n);\n\n-- 9. AI 调用日志表\nCREATE TABLE ai_logs (\n    id BIGINT PRIMARY KEY AUTO_INCREMENT,\n    tenant_id BIGINT NOT NULL,\n    user_id BIGINT,\n    agent_type VARCHAR(32) COMMENT 'agent 类型：report/copywriting/chat',\n    prompt TEXT,\n    response TEXT,\n    tokens_input INT,\n    tokens_output INT,\n    cost_points INT,\n    duration_ms INT,\n    status TINYINT DEFAULT 1 COMMENT '1:成功 0:失败',\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    INDEX idx_tenant_time (tenant_id, created_at),\n    INDEX idx_tenant_agent_time (tenant_id, agent_type, created_at) -- 看板按 agent + 时间聚合，避免全表扫描\n);\n\n-- 10. RAG 知识库文档表\nCREATE TABLE knowledge_docs (\n    id BIGINT PRIMARY KEY AUTO_INCREMENT,\n    tenant_id BIGINT NOT NULL,\n    name VARCHAR(128),\n    file_url VARCHAR(255),\n    file_type VARCHAR(16),\n    document_id VARCHAR(128) COMMENT 'Coze/Dify 返回的文档 ID（用于检索引用）',\n    status TINYINT DEFAULT 0 COMMENT '0:待处理 1:已索引 2:失败',\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    INDEX idx_tenant (tenant_id)\n);\n\n-- 11. AI 报告/点评表\nCREATE TABLE ai_reports (\n    id BIGINT PRIMARY KEY AUTO_INCREMENT,\n    tenant_id BIGINT NOT NULL,\n    student_id BIGINT NOT NULL,\n    teacher_id BIGINT,\n    class_id BIGINT,\n    content TEXT COMMENT 'AI 生成的点评/报告（Markdown）',\n    report_type ENUM('daily', 'weekly', 'monthly') DEFAULT 'daily',\n    cost_points INT DEFAULT 0 COMMENT '本次生成消耗积分',\n    status TINYINT DEFAULT 1 COMMENT '0:生成中 1:已完成 2:失败',\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    INDEX idx_tenant_student (tenant_id, student_id)\n);\n```\n\n---\n\n## 5. 多租户与权限实现\n\n### 5.1 租户上下文（AsyncLocalStorage）\n\n```ts\n// common/tenant-context.ts\nimport { AsyncLocalStorage } from 'node:async_hooks';\n\nexport interface TenantContext {\n  tenantId: number;\n  userId: number;\n  role: 'admin' | 'teacher' | 'parent';\n}\n\nexport const tenantStorage = new AsyncLocalStorage<TenantContext>();\n\n/** 获取当前请求的租户上下文，未注入时抛错（防止越权查询漏网） */\nexport function getTenantContext(): TenantContext {\n  const ctx = tenantStorage.getStore();\n  if (!ctx) throw new Error('TENANT_CONTEXT_MISSING');\n  return ctx;\n}\n```\n\n### 5.2 中间件：JWT 解析后注入上下文\n\n```ts\n// middleware/tenant.ts\nimport { tenantStorage } from '../common/tenant-context';\nimport { verifyAccessToken } from '../modules/auth/auth.jwt';\n\nexport function tenantMiddleware(req, res, next) {\n  const token = req.headers.authorization?.replace('Bearer ', '');\n  if (!token) return next(); // 公开接口放行，由 rbac 守卫拦截受保护路由\n  try {\n    const payload = verifyAccessToken(token);\n    // 后续所有中间件、controller、service 都运行在该上下文内\n    tenantStorage.run(\n      { tenantId: payload.tenantId, userId: payload.userId, role: payload.role },\n      () => next(),\n    );\n  } catch {\n    next(); // 无效 token 放行，由 requireAuth 返回 40001\n  }\n}\n```\n\n### 5.3 Prisma 租户扩展（自动注入 tenantId，核心防串号机制）\n\n```ts\n// common/prisma.ts\nimport { PrismaClient } from '@prisma/client';\nimport { getTenantContext } from './tenant-context';\n\n// 需要租户隔离的模型白名单（不含 tenants / point_prices / agent_configs 等全局表）\nconst TENANT_MODELS = [\n  'users',\n  'classes',\n  'students',\n  'pointAccounts',\n  'pointLedger',\n  'aiLogs',\n  'knowledgeDocs',\n  'aiReports',\n] as const;\n\nfunction withTenantQuery(model: string) {\n  return {\n    async $allOperations({ operation, args, query }) {\n      let tenantId: number | null = null;\n      try {\n        tenantId = getTenantContext().tenantId;\n      } catch {\n        /* 定时任务等无上下文场景 */\n      }\n      if (tenantId != null) {\n        // 读/改/删：where 强制合并 tenantId\n        if (\n          [\n            'findMany',\n            'findFirst',\n            'findFirstOrThrow',\n            'count',\n            'aggregate',\n            'groupBy',\n            'update',\n            'updateMany',\n            'delete',\n            'deleteMany',\n          ].includes(operation)\n        ) {\n          args.where = { AND: [args.where ?? {}, { tenantId }] };\n        }\n        // 写：data 强制覆盖 tenantId\n        if (operation === 'create') args.data = { ...args.data, tenantId };\n        if (operation === 'createMany') {\n          args.data = args.data.map((d: object) => ({ ...d, tenantId }));\n        }\n      }\n      return query(args);\n    },\n  };\n}\n\nconst base = new PrismaClient();\nconst queryExt: Record<string, ReturnType<typeof withTenantQuery>> = {};\nfor (const m of TENANT_MODELS) queryExt[m] = withTenantQuery(m);\n\nexport const prisma = base.$extends({ query: queryExt });\n```\n\n### 5.4 RBAC 角色守卫\n\n```ts\n// middleware/rbac.ts\ntype Role = 'admin' | 'teacher' | 'parent';\n\n/** 角色等级：admin > teacher > parent */\nconst ROLE_LEVEL: Record<Role, number> = { admin: 3, teacher: 2, parent: 1 };\n\nexport function requireRole(min: Role) {\n  return (req, res, next) => {\n    const ctx = tenantStorage.getStore();\n    if (!ctx) return res.status(401).json({ code: 40001, message: '未登录', data: null });\n    if (ROLE_LEVEL[ctx.role] < ROLE_LEVEL[min]) {\n      return res.status(403).json({ code: 40003, message: '无权限', data: null });\n    }\n    next();\n  };\n}\n```\n\n### 5.5 认证方案\n\n| 场景                      | 流程                                                                                     | Token 策略             |\n| :------------------------ | :--------------------------------------------------------------------------------------- | :--------------------- |\n| 小程序（家长）            | `wx.login` 拿 code → 后端 `code2session` 换 openid → 查/建 user（role=parent）→ 签发 JWT | access 2h + refresh 7d |\n| 管理后台（admin/teacher） | 手机号/账号 + 密码（bcrypt）→ 签发 JWT                                                   | access 2h + refresh 7d |\n| refresh 吊销              | refresh token 存 Redis `auth:refresh:{userId}`（TTL 7d），登出即删                       | 支持强制下线           |\n\nJWT payload：`{ userId, tenantId, role }`，密钥 `JWT_SECRET`，算法 HS256。\n\n```ts\n// modules/auth/auth.jwt.ts（核心逻辑示意）\nimport jwt from 'jsonwebtoken';\n\n/** 签发 token 对：access 2h；refresh 7d 并写入 Redis（登出即删，支持强制下线） */\nexport async function issueTokens(\n  userId: number,\n  tenantId: number,\n  role: 'admin' | 'teacher' | 'parent',\n) {\n  const access = jwt.sign({ userId, tenantId, role, type: 'access' }, JWT_SECRET, {\n    expiresIn: '2h',\n  });\n  const refresh = jwt.sign({ userId, type: 'refresh' }, JWT_SECRET, { expiresIn: '7d' });\n  await redis.set(`auth:refresh:${userId}`, refresh, 'EX', 7 * 24 * 3600);\n  return { access, refresh };\n}\n```\n\n刷新流程：`POST /api/auth/refresh` 校验 refresh 有效**且与 Redis 存储值一致**（不一致说明已吊销或被替换），通过后重新 `issueTokens` 签发新 token 对。\n\n### 5.6 数据权限（行级过滤，防同租户越权）\n\n> RBAC（5.4）只解决\"角色能不能调接口\"，不解决\"能看哪一行数据\"。若只靠角色守卫，家长 A 传别人的 studentId 就能看到家长 B 孩子的报告（同租户内水平越权）。凡 parent 角色涉及学员维度的查询，service 层必须强制追加行级过滤：\n\n```ts\n// modules/report/report.service.ts（核心逻辑示意）\n// 家长查询报告时，强制过滤 student.parent_user_id = 当前用户\nif (ctx.role === 'parent') {\n  where.student = { parentUserId: ctx.userId };\n}\n```\n\n小程序端所有 parent 角色接口（报告列表/详情、学员信息）同理，一律强制过滤 `parent_user_id`。\n\n---\n\n## 6. AI 中台设计\n\n### 6.1 Provider 抽象（第三方模型可插拔）\n\n```ts\n// modules/ai/providers/provider.interface.ts\nexport interface AiChatParams {\n  agentType: 'report' | 'copywriting' | 'chat';\n  prompt: string; // 用户输入（如课堂表现描述）\n  context?: string; // RAG 检索结果拼接的上下文\n  userId?: string; // 第三方平台的会话隔离用户 ID\n}\n\nexport interface AiResult {\n  content: string;\n  tokensInput: number;\n  tokensOutput: number;\n}\n\nexport interface AiProvider {\n  /** 非流式调用 */\n  chat(params: AiChatParams): Promise<AiResult>;\n  /** 流式调用，逐块产出文本 */\n  chatStream(params: AiChatParams): AsyncIterable<string>;\n}\n```\n\n实现顺序：`CozeProvider`（首选，自带 Agent + RAG）→ `DifyProvider`（备选）→ `OpenAIProvider`（兜底直连）。\n由 `agent_configs` 表决定每个 `agentType` 用哪个 provider/bot，运营可在后台在线切换，无需改代码重新部署。\n\n### 6.2 SSE 流式接口（服务端）\n\n```ts\n// modules/ai/sse.ts（核心逻辑示意）\nexport async function sseChat(req, res, provider: AiProvider, params: AiChatParams) {\n  res.setHeader('Content-Type', 'text/event-stream');\n  res.setHeader('Cache-Control', 'no-cache');\n  res.setHeader('Connection', 'keep-alive');\n  res.setHeader('X-Accel-Buffering', 'no'); // 关闭 Nginx 缓冲\n  res.flushHeaders();\n\n  // 心跳保活，防止中间层断连\n  const heartbeat = setInterval(() => res.write(': ping\\n\\n'), 15000);\n\n  try {\n    for await (const chunk of provider.chatStream(params)) {\n      res.write(`data: ${JSON.stringify({ type: 'chunk', content: chunk })}\\n\\n`);\n    }\n    res.write(`event: done\\ndata: {}\\n\\n`);\n  } catch (err) {\n    res.write(`event: error\\ndata: ${JSON.stringify({ message: 'AI 服务调用失败' })}\\n\\n`);\n  } finally {\n    clearInterval(heartbeat);\n    res.end();\n  }\n}\n```\n\nNginx 必须配置（SSE 透传）：\n\n```nginx\nlocation /api/ai/ {\n    proxy_pass http://server:3000;\n    proxy_buffering off;          # 关闭响应缓冲\n    proxy_read_timeout 300s;      # 长连接超时\n    proxy_set_header Connection '';\n    proxy_http_version 1.1;\n}\n```\n\n### 6.3 小程序端 SSE 接收（关键差异点）\n\n微信小程序**不支持 EventSource**，需用 `enableChunked` 分块接收（基础库 >= 2.20.1）：\n\n```ts\n// miniapp/src/api/sse.ts（核心逻辑示意）\nexport function sseRequest(url: string, data: object, onChunk: (text: string) => void) {\n  const task = uni.request({\n    url,\n    method: 'POST',\n    data,\n    header: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },\n    enableChunked: true, // 关键：开启分块传输\n    success: () => {},\n  });\n  let buffer = '';\n  task.onChunkReceived((res: any) => {\n    // 分块可能是半个 SSE 事件，必须先入缓冲区再按 \\n\\n 切分\n    buffer += new TextDecoder('utf-8').decode(res.data);\n    const parts = buffer.split('\\n\\n');\n    buffer = parts.pop() ?? '';\n    for (const part of parts) {\n      const line = part.replace(/^data: /, '');\n      if (!line || line.startsWith(':')) continue; // 跳过心跳注释行\n      const payload = JSON.parse(line);\n      if (payload.type === 'chunk') onChunk(payload.content);\n    }\n  });\n  return task;\n}\n```\n\n> 兼容性降级：基础库 < 2.20.1 的环境，服务端提供 `stream=false` 参数走非流式一次性返回。\n\n### 6.4 AI 调用 + 积分扣减时序（核心业务闭环）\n\n```mermaid\nsequenceDiagram\n    participant T as 老师端(Web后台)\n    participant S as Server(Express)\n    participant R as Redis\n    participant M as MySQL\n    participant A as AI Provider\n\n    T->>S: POST /api/ai/report/generate（body 携带前端生成的 bizId）\n    S->>S: 查 point_prices 得单价\n    S->>R: Lua 原子扣减(EXISTS 幂等锁 + 余额校验 + DECRBY)\n    alt 余额不足 / 重复请求\n        S-->>T: 40901 / 40902\n    else 扣减成功\n        S->>A: 调用 Agent(prompt + RAG context)\n        A-->>S: 生成内容\n        S->>M: 事务写入 point_ledger(consume) + ai_logs + ai_reports\n        S-->>T: 返回生成结果\n        Note over S,R: 若 AI 调用失败：Redis INCRBY 回滚余额<br/>并写 rollback 反向流水\n    end\n```\n\n> **bizId 生成规则**：由前端在发起请求时生成（nanoid() 或 uuid），随请求体传到后端，服务端不得自行生成。同一 bizId 重试多次只扣一次积分——即使网络抖动导致用户重复点击，也不会重复扣费。\n\n---\n\n## 7. 积分计费核心实现\n\n### 7.1 Redis Key 设计\n\n| Key 模式                             | 说明                         |\n| :----------------------------------- | :--------------------------- |\n| `points:balance:{tenantId}:{userId}` | 用户可用余额（String，整数） |\n| `points:lock:{bizId}`                | 幂等锁，防止重复扣减         |\n\n> 预扣（freeze/unfreeze）为二期功能：MVP 的 AI 生成失败场景已由「扣减 → 失败回滚」覆盖，故不设 frozen 字段与冻结流水，保持账本简洁。\n\n### 7.2 Lua 脚本：原子扣减（防超发）\n\n`apps/server/scripts/lua/deduct_points.lua`：\n\n```lua\n-- KEYS[1]: points:balance:{tenantId}:{userId}\n-- KEYS[2]: points:lock:{bizId}\n-- ARGV[1]: 扣减数量（正整数）\n-- ARGV[2]: 幂等锁过期时间（秒）\n\n-- 幂等检查\nif redis.call('EXISTS', KEYS[2]) == 1 then\n    return -2 -- 重复请求\nend\n\nlocal current = tonumber(redis.call('GET', KEYS[1]) or '0')\nlocal delta = tonumber(ARGV[1])\n\nif current < delta then\n    return -1 -- 余额不足\nend\n\nredis.call('DECRBY', KEYS[1], delta)\nredis.call('SET', KEYS[2], '1', 'EX', tonumber(ARGV[2]))\n\nreturn current - delta\n```\n\n### 7.3 Node.js 调用（ioredis + TypeScript）\n\n```ts\n// modules/points/points.service.ts（核心逻辑示意）\nimport Redis from 'ioredis';\nimport fs from 'fs';\nimport path from 'path';\n\nconst redis = new Redis(process.env.REDIS_URL!);\nconst deductScript = fs.readFileSync(\n  path.join(__dirname, '../../scripts/lua/deduct_points.lua'),\n  'utf-8',\n);\n\n// 余额缓存预热：Redis 重启或 key 丢失时从 MySQL 加载，避免\"有积分却扣不了\"（key 不存在时 Lua 读到 0）\n// 注意：对账任务只遍历已存在的 key，发现不了\"丢失的 key\"，必须在读路径兜底\nasync function ensureBalanceLoaded(tenantId: number, userId: number) {\n  const key = `points:balance:${tenantId}:${userId}`;\n  if (await redis.exists(key)) return;\n  const account = await prisma.pointAccount.findUnique({\n    where: { tenantId_userId: { tenantId, userId } },\n  });\n  // NX：仅当 key 不存在时写入，防止覆盖并发期间的充值\n  await redis.set(key, account?.balance ?? 0, 'NX');\n}\n\nexport async function deductPoints(params: {\n  tenantId: number;\n  userId: number;\n  amount: number;\n  bizId: string;\n}): Promise<{ ok: boolean; balance?: number; reason?: string }> {\n  // 扣减前确保 Redis 余额已初始化（防 Redis 重启 / key 丢失导致误判余额为 0）\n  await ensureBalanceLoaded(params.tenantId, params.userId);\n  const balanceKey = `points:balance:${params.tenantId}:${params.userId}`;\n  const lockKey = `points:lock:${params.bizId}`;\n\n  const result = (await redis.eval(\n    deductScript,\n    2,\n    balanceKey,\n    lockKey,\n    params.amount,\n    300, // 锁 5 分钟\n  )) as number;\n\n  if (result === -1) return { ok: false, reason: 'INSUFFICIENT_BALANCE' };\n  if (result === -2) return { ok: false, reason: 'DUPLICATE_REQUEST' };\n\n  return { ok: true, balance: result };\n}\n```\n\n### 7.4 回滚逻辑（AI 调用失败时自动触发）\n\n回滚不修改原流水，而是新增一条反向流水：\n\n```ts\nexport async function rollbackPoints(params: {\n  tenantId: number;\n  userId: number;\n  amount: number;\n  originalBizId: string;\n}) {\n  const balanceKey = `points:balance:${params.tenantId}:${params.userId}`;\n  await redis.incrby(balanceKey, params.amount);\n\n  // 写数据库反向流水\n  await prisma.pointLedger.create({\n    data: {\n      tenantId: params.tenantId,\n      userId: params.userId,\n      changeType: 'rollback',\n      changeAmount: params.amount,\n      balanceAfter: await redis.get(balanceKey).then(Number),\n      bizId: `rollback:${params.originalBizId}`,\n      bizType: 'ai_report_rollback',\n    },\n  });\n}\n```\n\n### 7.5 异步落库 + 对账（BullMQ 定时任务，每 1 分钟）\n\n> 注意：必须用 `SCAN` 游标遍历，禁止 `KEYS`（生产环境会阻塞 Redis）。\n\n```ts\n// jobs/reconcile.job.ts（核心逻辑示意）\nasync function reconcile() {\n  let cursor = '0';\n  do {\n    const [next, keys] = await redis.scan(cursor, 'MATCH', 'points:balance:*', 'COUNT', 100);\n    cursor = next;\n    for (const key of keys) {\n      const [, , tenantId, userId] = key.split(':');\n      const redisBalance = Number(await redis.get(key));\n      // 以 MySQL 流水为准计算应收余额\n      const ledgerSum = await prisma.pointLedger.aggregate({\n        _sum: { changeAmount: true },\n        where: { tenantId: Number(tenantId), userId: Number(userId) },\n      });\n      const expected = ledgerSum._sum.changeAmount ?? 0;\n      if (redisBalance !== expected) {\n        // 不一致：以流水为准修复 Redis，并记录告警日志\n        logger.warn({ tenantId, userId, redisBalance, expected }, '积分对账不一致，已修复');\n        await redis.set(key, expected);\n      }\n      await prisma.pointAccount.upsert({\n        where: { tenantId_userId: { tenantId: Number(tenantId), userId: Number(userId) } },\n        create: { tenantId: Number(tenantId), userId: Number(userId), balance: expected },\n        update: { balance: expected },\n      });\n    }\n  } while (cursor !== '0');\n}\n```\n\n---\n\n## 8. API 设计\n\n> 约定：**所有写操作（含 update / delete / export）统一使用 POST**；查询使用 GET。\n> 统一前缀 `/api`，需登录接口由 `requireAuth` / `requireRole` 守卫。\n> 计费类写接口（/api/ai/chat、/api/ai/report/generate、/api/ai/copywriting/generate）请求体必须携带前端生成的 `bizId` 幂等键（nanoid/uuid），服务端不得自行生成。\n\n### 8.1 认证模块\n\n| Method | Path                  | 说明                                | 角色               |\n| :----- | :-------------------- | :---------------------------------- | :----------------- |\n| POST   | /api/auth/wx-login    | 小程序登录（code → openid → token） | 公开               |\n| POST   | /api/auth/admin-login | 后台账号密码登录                    | 公开               |\n| POST   | /api/auth/refresh     | 刷新 access token                   | 公开（带 refresh） |\n| POST   | /api/auth/logout      | 登出（吊销 refresh token）          | 登录用户           |\n| GET    | /api/auth/me          | 获取当前用户信息                    | 登录用户           |\n\n### 8.2 机构管理（Web 后台）\n\n| Method | Path                | 说明                        | 角色    |\n| :----- | :------------------ | :-------------------------- | :------ |\n| GET    | /api/tenant/info    | 机构信息                    | teacher |\n| POST   | /api/tenant/update  | 更新机构信息                | admin   |\n| GET    | /api/user/list      | 用户列表（老师/家长）       | teacher |\n| POST   | /api/user/create    | 创建老师账号                | admin   |\n| POST   | /api/user/update    | 更新用户                    | admin   |\n| POST   | /api/user/delete    | 删除用户                    | admin   |\n| GET    | /api/class/list     | 班级列表                    | teacher |\n| POST   | /api/class/create   | 创建班级                    | admin   |\n| POST   | /api/class/update   | 更新班级                    | admin   |\n| POST   | /api/class/delete   | 删除班级                    | admin   |\n| GET    | /api/student/list   | 学员列表（按班级/老师筛选） | teacher |\n| POST   | /api/student/create | 创建学员                    | teacher |\n| POST   | /api/student/update | 更新学员                    | teacher |\n| POST   | /api/student/delete | 删除学员                    | admin   |\n\n### 8.3 AI 中台模块\n\n| Method | Path                         | 说明                                             | 角色    |\n| :----- | :--------------------------- | :----------------------------------------------- | :------ |\n| POST   | /api/ai/chat                 | AI 对话（SSE 流式返回；`stream=false` 走非流式） | teacher |\n| POST   | /api/ai/report/generate      | 生成学员点评/成长报告                            | teacher |\n| POST   | /api/ai/copywriting/generate | 生成招生文案                                     | teacher |\n| GET    | /api/ai/logs                 | AI 调用日志查询（分页/筛选）                     | admin   |\n| GET    | /api/ai/agents               | Agent 配置列表                                   | admin   |\n| POST   | /api/ai/agents/update        | 更新 Agent 配置（provider/bot/prompt）           | admin   |\n\n### 8.4 报告模块\n\n| Method | Path               | 说明                                | 角色   |\n| :----- | :----------------- | :---------------------------------- | :----- |\n| GET    | /api/report/list   | 报告列表（parent 只能看自己孩子的） | parent |\n| GET    | /api/report/detail | 报告详情                            | parent |\n\n### 8.5 积分模块\n\n| Method | Path                      | 说明                                           | 角色    |\n| :----- | :------------------------ | :--------------------------------------------- | :------ |\n| GET    | /api/points/balance       | 查询机构积分余额                               | teacher |\n| POST   | /api/points/recharge      | 充值（后台操作，Redis INCRBY + recharge 流水） | admin   |\n| GET    | /api/points/ledger        | 查询流水（分页）                               | teacher |\n| GET    | /api/points/prices        | 查询计费单价                                   | teacher |\n| POST   | /api/points/prices/update | 更新计费单价                                   | admin   |\n\n### 8.6 知识库与文件模块\n\n| Method | Path                  | 说明                                      | 角色    |\n| :----- | :-------------------- | :---------------------------------------- | :------ |\n| POST   | /api/knowledge/upload | 上传文档（OSS + 调 Coze/Dify 知识库 API） | admin   |\n| GET    | /api/knowledge/list   | 知识库文档列表                            | admin   |\n| POST   | /api/knowledge/delete | 删除文档                                  | admin   |\n| POST   | /api/file/upload      | 通用文件上传（multer → OSS）              | teacher |\n\n### 8.7 数据看板\n\n| Method | Path                   | 说明                                  | 角色    |\n| :----- | :--------------------- | :------------------------------------ | :------ |\n| GET    | /api/dashboard/summary | AI 调用次数、积分消耗趋势、活跃学员数 | teacher |\n\n---\n\n## 9. 逐周开发任务清单（AI IDE 可执行）\n\n每个任务都写成可被 AI 理解的具体指令，AI IDE 据此逐条生成代码。\n\n### 第 1 周：架构定稿 + 基础底座\n\n**任务 1.1 初始化 Monorepo**\n\n- 用 pnpm workspace 初始化 monorepo\n- 创建 `apps/server`（Express + TS）、`apps/admin`（Vite + Vue3）、`apps/miniapp`（uni-app）、`packages/shared`\n- 配置 ESLint + Prettier + Husky + Commitlint\n\n**任务 1.2 后端基础框架（Express）**\n\n- 初始化 Express + TypeScript 项目（tsconfig 严格模式）\n- 搭建分层骨架：`middleware/` + `modules/*/`（routes → controller → service）\n- 全局错误处理中间件 + 统一响应拦截（`{ code, message, data }`）\n- 集成 pino 日志、zod 参数校验、ioredis 客户端\n\n**任务 1.3 数据库建模（Prisma）**\n\n- 按第 4 节 DDL 编写 `prisma/schema.prisma`\n- 执行 `prisma migrate dev` 建表\n- 编写种子脚本（seed）：默认租户 + admin 账号 + 默认计费单价 + 默认 Agent 配置\n\n**任务 1.4 多租户中间件**\n\n- 实现 `tenantStorage`（AsyncLocalStorage）+ `tenantMiddleware`（见第 5.1/5.2 节）\n- 实现 Prisma 租户扩展，自动注入 tenantId（见第 5.3 节）\n- 编写绕过测试：无上下文查询租户表必须抛错\n\n**任务 1.5 鉴权模块**\n\n- 实现微信登录（code2session → 查/建用户 → 签发 JWT）\n- 实现后台账号密码登录（bcrypt + JWT）\n- 实现 refresh token（Redis 存储，支持吊销）\n- 实现 RBAC 守卫 `requireRole`（admin/teacher/parent）\n\n**任务 1.6 前端脚手架**\n\n- Admin：Vite + Vue3 + Element Plus + Pinia + Vue Router + Axios 封装（自动带 token、401 跳登录）\n- Miniapp：uni-app + Vue3 + Pinia，配置 manifest.json 和 pages.json，封装 request 工具\n\n### 第 2 周：AI 中台核心能力\n\n**任务 2.1 封装 AI 调用网关**\n\n- 定义 `AiProvider` 接口（chat + chatStream，见第 6.1 节）\n- 实现 `CozeProvider`（首选）；接口留好 `DifyProvider` / `OpenAIProvider` 扩展位\n- 读取 `agent_configs` 表路由到对应 provider/bot\n\n**任务 2.2 实现 SSE 流式输出**\n\n- 在 Express 中实现 `POST /api/ai/chat`（见第 6.2 节：心跳、event: done/error）\n- Nginx 配置 SSE 透传（proxy_buffering off）\n\n**任务 2.3 积分扣减 Lua 脚本**\n\n- 编写 `deduct_points.lua`（见第 7.2 节）\n- 封装 `deductPoints()`（见第 7.3 节）\n- 并发验证：模拟 100 并发扣减，验证不超发、幂等锁生效\n\n**任务 2.4 积分流水落库**\n\n- 扣减成功后异步写 `point_ledger`（biz_id 唯一约束兜底幂等）\n- AI 调用失败自动回滚（见第 7.4 节）\n- 实现对账定时任务（SCAN 遍历，见第 7.5 节）\n\n**任务 2.5 计费配置**\n\n- 实现 `point_prices` 读写接口（全局默认价 + 租户自定义价）\n\n**任务 2.6 文件上传模块**\n\n- 集成阿里云 OSS SDK + multer\n- 实现 `POST /api/file/upload`，支持图片/PDF/Word\n\n**任务 2.7 RAG 知识库对接**\n\n- 调用 Coze/Dify 的知识库上传 API\n- 将返回的 documentId 存入 `knowledge_docs` 表\n\n### 第 3 周：Web 管理后台\n\n**任务 3.1 登录页 + 布局**\n\n- 登录页（账号密码）+ 主布局（侧边栏 + 顶栏 + 面包屑）\n- 路由守卫：未登录跳转登录页\n\n**任务 3.2 租户与权限管理**\n\n- 机构信息配置页\n- 老师账号管理（增删改查、角色分配）\n- 班级管理 + 学员档案管理（按班级、按老师筛选）\n\n**任务 3.3 AI 经营助手（核心）**\n\n- AI 点评生成器：选学员 → 输入课堂表现 → `POST /api/ai/report/generate` → 展示 → 可人工编辑 → 保存\n- AI 招生文案：输入机构特色 → `POST /api/ai/copywriting/generate` → 一键复制\n- AI 对话：fetch + ReadableStream 接收 SSE，打字机效果\n\n**任务 3.4 RAG 知识库管理**\n\n- 文档拖拽上传页\n- 文档列表页（状态：待处理/已索引/失败）\n\n**任务 3.5 积分与计费配置**\n\n- 积分余额、消耗记录、充值操作\n- 计费单价配置（point_prices）\n- Agent 配置管理（provider/bot/Prompt 在线编辑）\n- 额度预警设置（低于阈值站内提示）\n\n**任务 3.6 数据看板**\n\n- AI 调用次数、积分消耗趋势、活跃学员数（ECharts）\n\n### 第 4 周：微信小程序\n\n**任务 4.1 小程序基础框架**\n\n- 配置 manifest.json（appid、权限）\n- 封装 request 工具（token 自动刷新）\n- 登录页（wx.login → 后端换 token）\n\n**任务 4.2 首页**\n\n- 机构介绍、AI 体验入口、积分余额\n- 轮播图、快捷入口（AI 问答、成长报告、积分中心）\n\n**任务 4.3 AI 对话页**\n\n- 聊天界面（消息列表 + 输入框 + 发送按钮）\n- `enableChunked` + `onChunkReceived` 接收 SSE 流，打字机效果（见第 6.3 节）\n- Markdown 渲染（towxml 或 mp-html）\n\n**任务 4.4 AI 成长报告页**\n\n- 列表展示孩子的历史报告\n- 详情页图文混排\n- 分享到微信群\n\n**任务 4.5 积分中心**\n\n- 积分余额展示 + 流水列表\n- 积分商城（兑换礼品/课时券，MVP 只做展示 + 后台核销）\n\n**任务 4.6 个人中心**\n\n- 用户信息、学员绑定、设置\n\n### 第 5 周：三端联调与 AI 调优\n\n**任务 5.1 端到端业务闭环测试**\n\n- 模拟场景：机构配置 → 老师生成点评 → 家长小程序查看\n- 排查多租户数据串号、权限越界问题\n\n**任务 5.2 Prompt 调优**\n\n- 针对舞蹈/艺术教培行业优化 Prompt\n- 示例：你是一位专业的舞蹈老师，请用亲切、鼓励的语气，为学员${name}生成课后点评，包含：优点、改进建议、鼓励话语。\n\n**任务 5.3 RAG 检索效果调优**\n\n- 调整 chunk size、topK\n- 验证 AI 能基于机构知识库准确回答\n\n**任务 5.4 性能测试**\n\n- 100+ 并发 SSE 流式输出测试\n- 积分扣减并发测试（验证 Lua 脚本）\n- 数据库慢查询优化\n\n### 第 6 周：部署上线与交付\n\n**任务 6.1 Docker 化**\n\n- 编写 Dockerfile（server / admin）\n- 编写 docker-compose.yml（MySQL + Redis + Server + Admin + Nginx，见第 10 节）\n\n**任务 6.2 生产环境部署**\n\n- 配置域名、SSL 证书、Nginx SSE 透传\n- 小程序提交审核\n\n**任务 6.3 数据初始化**\n\n- 为种子客户创建租户账号\n- 导入基础数据（学员、老师、班级）\n\n**任务 6.4 用户手册**\n\n- 《机构管理员操作手册》\n- 《老师快速上手指南》\n\n**任务 6.5 真实客户试用**\n\n- 邀请 1-2 家真实机构试用\n- 收集反馈，修复 BUG\n\n---\n\n## 10. 部署方案（docker-compose.yml）\n\n```yaml\nservices:\n  mysql:\n    image: mysql:8.0\n    environment:\n      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}\n      MYSQL_DATABASE: art_edu_ai\n    volumes:\n      - mysql_data:/var/lib/mysql\n    ports:\n      - '3306:3306'\n    healthcheck: # 就绪探测：server 依赖其健康后才启动\n      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']\n      interval: 10s\n      timeout: 5s\n      retries: 5\n    restart: unless-stopped\n\n  redis:\n    image: redis:7-alpine\n    command: redis-server --appendonly yes\n    volumes:\n      - redis_data:/data\n    healthcheck:\n      test: ['CMD', 'redis-cli', 'ping']\n      interval: 10s\n      timeout: 5s\n      retries: 5\n    restart: unless-stopped\n\n  server:\n    build: ./apps/server\n    env_file: .env\n    depends_on: # 等待 MySQL/Redis 健康就绪，而非仅启动顺序\n      mysql:\n        condition: service_healthy\n      redis:\n        condition: service_healthy\n    ports:\n      - '3000:3000'\n    restart: unless-stopped\n\n  admin:\n    build: ./apps/admin # nginx 托管打包后的静态资源\n    ports:\n      - '8081:80'\n    restart: unless-stopped\n\n  nginx:\n    image: nginx:alpine\n    volumes:\n      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro\n      - ./nginx/certs:/etc/nginx/certs:ro\n    ports:\n      - '80:80'\n      - '443:443'\n    depends_on:\n      - server\n      - admin\n    restart: unless-stopped\n\nvolumes:\n  mysql_data:\n  redis_data:\n```\n\n---\n\n## 11. 环境变量模板（.env.example）\n\n```env\n# Server\nNODE_ENV=production\nPORT=3000\nJWT_SECRET=your_jwt_secret\n\n# MySQL（Docker Compose 部署时改为 DB_HOST=mysql）\nDB_HOST=localhost\nDB_PORT=3306\nDB_USER=root\nDB_PASSWORD=your_password\nDB_NAME=art_edu_ai\n\n# Redis（Docker Compose 部署时改为 redis://redis:6379）\nREDIS_URL=redis://localhost:6379\n\n# 微信小程序\nWX_APPID=your_appid\nWX_SECRET=your_secret\n\n# AI 服务\nCOZE_API_KEY=your_coze_key\nCOZE_BOT_ID=your_bot_id\nDIFY_API_KEY=your_dify_key\nOPENAI_API_KEY=your_openai_key\n\n# OSS\nOSS_ACCESS_KEY=your_key\nOSS_SECRET=your_secret\nOSS_BUCKET=your_bucket\nOSS_REGION=oss-cn-hangzhou\n```\n\n---\n\n## 12. 关键风险与应对\n\n| 风险               | 应对策略                                                              |\n| :----------------- | :-------------------------------------------------------------------- |\n| AI 响应慢          | 强制 SSE 流式输出；复杂任务异步化（BullMQ）                           |\n| 多租户数据泄露     | Prisma 租户扩展强制注入 tenantId + 无上下文查询抛错 + DB 唯一索引兜底 |\n| 积分超发           | Lua 脚本原子扣减 + 数据库流水幂等约束 + 定时对账（以流水为准）        |\n| 小程序 SSE 兼容性  | 基础库 >= 2.20.1 用 enableChunked；低版本降级 `stream=false` 非流式   |\n| Coze API 限流/故障 | Provider 抽象可切换 Dify/OpenAI；agent_configs 在线切换无需发版       |\n| 30-45 天不够       | 严格锁定 MVP 范围：机构后台 + 小程序 AI 点评 + 积分，其他全部二期     |\n| AI 效果差          | 针对行业调优 Prompt + RAG 知识库；保留人工编辑入口                    |\n\n---\n\n## 13. AI IDE 系统提示（可直接复制）\n\n```text\n你正在开发一个名为 ArtEdu AI 的多租户 SaaS 系统，包含：\n- apps/server: Express + TypeScript + Prisma + MySQL + Redis + BullMQ 后端（AI SaaS 中台）\n- apps/admin: Vue 3 + Vite + Element Plus 管理后台\n- apps/miniapp: uni-app + Vue 3 微信小程序\n\n请严格遵循 plan.md 中的：\n1. 系统架构与目录结构（第 1、3 节）\n2. 数据库表结构（第 4 节）\n3. 多租户与权限实现（第 5 节）\n4. AI 中台设计含小程序 SSE 接收方案（第 6 节）\n5. 积分扣减 Lua 脚本与对账（第 7 节）\n6. API 设计（第 8 节）\n7. 逐周任务清单（第 9 节）\n\n代码规范：TypeScript 严格模式，ESLint + Prettier，注释使用中文（UTF-8），所有接口需带 JSDoc 注释。\n多租户：所有租户维度表的查询必须走 Prisma 租户扩展，禁止绕过扩展直接操作。\nAPI 约定：所有写操作（含 update/delete/export）统一使用 POST 方法。\n```\n";
+
+  marked.setOptions({ gfm: true, breaks: false });
+  const content = document.getElementById('content');
+  content.innerHTML = marked.parse(RAW);
+
+  // 将 marked 渲染的 mermaid 代码块转换为 mermaid 容器
+  content.querySelectorAll('pre code.language-mermaid').forEach(function (el) {
+    const pre = el.parentElement;
+    const div = document.createElement('div');
+    div.className = 'mermaid';
+    div.textContent = el.textContent;
+    pre.replaceWith(div);
+  });
+
+  if (window.mermaid) {
+    mermaid.initialize({ startOnLoad: false, securityLevel: 'loose', theme: 'neutral' });
+    mermaid.run({ nodes: content.querySelectorAll('.mermaid') });
+  }
+  if (window.hljs) {
+    content.querySelectorAll('pre code').forEach(function (b) { hljs.highlightElement(b); });
+  }
+
+  // 生成目录
+  const toc = document.getElementById('toc');
+  const heads = content.querySelectorAll('h1, h2, h3');
+  heads.forEach(function (h, i) {
+    h.id = 'sec-' + i;
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    a.className = 'lvl-' + h.tagName.toLowerCase();
+    a.addEventListener('click', function () {
+      document.getElementById('sidebar').classList.remove('open');
+    });
+    toc.appendChild(a);
+  });
+
+  // 滚动高亮当前章节
+  const links = Array.prototype.slice.call(toc.children);
+  const obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        links.forEach(function (l) { l.classList.remove('active'); });
+        const id = e.target.id;
+        const cur = toc.querySelector('a[href="#' + id + '"]');
+        if (cur) cur.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-10% 0px -80% 0px' });
+  heads.forEach(function (h) { obs.observe(h); });
+
+  // 回到顶部
+  const back = document.getElementById('backTop');
+  window.addEventListener('scroll', function () {
+    back.style.display = window.scrollY > 400 ? 'block' : 'none';
+  });
+  back.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+  // 移动端菜单
+  document.getElementById('menuBtn').addEventListener('click', function () {
+    document.getElementById('sidebar').classList.toggle('open');
+  });
+</script>
+</body>
+</html>
