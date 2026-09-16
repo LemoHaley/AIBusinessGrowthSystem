@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArtEdu AI 阶段交付记录</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --sidebar: #16202e;
+    --border: #e5e7eb;
+    --text: #1f2937;
+    --muted: #6b7280;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Segoe UI", "Microsoft YaHei", -apple-system, sans-serif;
+    color: var(--text);
+    background: #f9fafb;
+  }
+  aside {
+    position: fixed; left: 0; top: 0; bottom: 0;
+    width: 250px; background: var(--sidebar);
+    overflow-y: auto; padding: 24px 0;
+  }
+  aside .brand { padding: 0 20px 18px; border-bottom: 1px solid rgba(255,255,255,.08); }
+  aside .brand h1 { color: #fff; font-size: 17px; margin-bottom: 4px; }
+  aside .brand p { color: #7d8ba1; font-size: 12px; }
+  nav { padding: 12px 0; }
+  nav a {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 20px; color: #cbd5e1; text-decoration: none;
+    font-size: 13.5px; border-left: 3px solid transparent;
+  }
+  nav a:hover { background: rgba(255,255,255,.06); color: #fff; }
+  nav a.active { border-left-color: var(--primary); color: #fff; background: rgba(37,99,235,.18); }
+  nav a .st { font-size: 11px; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+  nav a .st.done { background: #14532d; color: #86efac; }
+  main { margin-left: 250px; padding: 44px 52px 80px; max-width: 1020px; }
+  .doc-header { margin-bottom: 36px; }
+  .doc-header h1 { font-size: 26px; margin-bottom: 10px; }
+  .doc-header p { color: var(--muted); line-height: 1.7; font-size: 14.5px; }
+  section {
+    background: #fff; border: 1px solid var(--border); border-radius: 12px;
+    padding: 30px 36px; margin-bottom: 34px;
+  }
+  section h2 {
+    font-size: 20px; border-left: 4px solid var(--primary);
+    padding-left: 13px; margin-bottom: 6px;
+  }
+  section h3 { font-size: 15.5px; margin: 24px 0 10px; color: #111827; }
+  .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+  .meta { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0 6px; }
+  .badge { font-size: 12px; padding: 3px 12px; border-radius: 999px; font-weight: 500; }
+  .badge.done { background: #dcfce7; color: #166534; }
+  .pill {
+    font-size: 12px; padding: 3px 12px; border-radius: 999px;
+    background: #f8fafc; border: 1px solid var(--border); color: #475569;
+  }
+  p { line-height: 1.75; font-size: 14px; margin: 8px 0; }
+  ul.tasks { margin: 6px 0 6px 4px; }
+  ul.tasks li { line-height: 1.75; font-size: 14px; margin: 3px 0 3px 20px; }
+  ul.checks { margin-top: 6px; }
+  ul.checks li {
+    list-style: none; position: relative; padding-left: 28px;
+    margin: 7px 0; font-size: 14px; line-height: 1.65;
+  }
+  ul.checks li.done { color: #166534; }
+  ul.checks li::before {
+    content: ''; position: absolute; left: 0; top: 4px;
+    width: 15px; height: 15px; border: 1.5px solid #16a34a; border-radius: 4px;
+    background: #16a34a;
+  }
+  ul.checks li::after {
+    content: ''; position: absolute; left: 4px; top: 7px;
+    width: 7px; height: 4px; border-left: 2px solid #fff; border-bottom: 2px solid #fff;
+    transform: rotate(-45deg);
+  }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; line-height: 1.6; }
+  th { background: #f1f5f9; font-weight: 600; }
+  tr:nth-child(even) td { background: #fafbfc; }
+  code {
+    background: #f1f5f9; padding: 2px 6px; border-radius: 4px;
+    font-family: Consolas, "Courier New", monospace; font-size: 12.5px; color: #b91c1c;
+  }
+  .note {
+    background: #eff6ff; border-left: 4px solid var(--primary);
+    padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 14px 0;
+    font-size: 13.5px; line-height: 1.7;
+  }
+  .warn {
+    background: #fffbeb; border-left: 4px solid #d97706;
+    padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 14px 0;
+    font-size: 13.5px; line-height: 1.7;
+  }
+  .backtop {
+    position: fixed; right: 28px; bottom: 28px; width: 40px; height: 40px;
+    border-radius: 50%; background: var(--primary); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none; font-size: 18px; box-shadow: 0 4px 12px rgba(37,99,235,.4);
+  }
+  .backtop:hover { background: #1d4ed8; }
+  @media (max-width: 900px) {
+    aside { display: none; }
+    main { margin-left: 0; padding: 24px 18px 60px; }
+  }
+  @media print {
+    aside, .backtop { display: none; }
+    main { margin: 0; }
+    section { break-inside: avoid-page; }
+  }
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="brand">
+    <h1>ArtEdu AI</h1>
+    <p>阶段交付记录</p>
+  </div>
+  <nav id="nav">
+    <a href="#overview">交付总览</a>
+    <a href="#d0">阶段 0 Monorepo 骨架 <span class="st done">已完成</span></a>
+    <a href="#d1">阶段 1 数据层建模 <span class="st done">已完成</span></a>
+    <a href="#d2">阶段 2 后端底座 <span class="st done">已完成</span></a>
+    <a href="#d3">阶段 3 鉴权模块 <span class="st done">已完成</span></a>
+    <a href="#d4">阶段 4 积分核心 <span class="st done">已完成</span></a>
+  </nav>
+</aside>
+
+<main>
+  <div class="doc-header">
+    <h1>ArtEdu AI - 阶段交付记录</h1>
+    <p>记录每个已完成阶段的实际交付内容与验证结果，每完成一个阶段追加一节。
+    规划文档见 <code>docs/phases/</code>（<code>plan.md</code> 为设计蓝图、唯一事实来源），进度总览见 <code>ROADMAP.md</code>，
+    Markdown 版见 <code>docs/deliveries.md</code>。</p>
+  </div>
+
+  <!-- 交付总览 -->
+  <section id="overview">
+    <h2>交付总览</h2>
+    <p class="subtitle">截至 2026-09-16，阶段 0-4 已完成，全部通过验证清单。</p>
+    <table>
+      <tr><th>阶段</th><th>名称</th><th>commit</th><th>验证结论</th><th>状态</th></tr>
+      <tr><td>0</td><td>Monorepo 骨架</td><td><code>9a06bc3</code></td><td>pnpm -r build 全绿，hooks 生效</td><td>已完成</td></tr>
+      <tr><td>1</td><td>数据层建模</td><td><code>2ba2ba3</code></td><td>migrate 建表成功，seed 数据可查</td><td>已完成</td></tr>
+      <tr><td>2</td><td>后端底座</td><td><code>5f4d6f7</code></td><td>租户隔离 4 项绕过测试全过</td><td>已完成</td></tr>
+      <tr><td>3</td><td>鉴权模块</td><td><code>5405700</code></td><td>双 token / 刷新 / 吊销 / 40001 实测通过</td><td>已完成</td></tr>
+      <tr><td>4</td><td>积分核心</td><td><code>3813465</code></td><td>100 并发无超发等 7 项验证全过</td><td>已完成</td></tr>
+      <tr><td>5</td><td>AI 中台</td><td>-</td><td>前置：Coze API key + bot id</td><td>未开始</td></tr>
+      <tr><td>6</td><td>业务闭环</td><td>-</td><td>前置：阶段 5</td><td>未开始</td></tr>
+      <tr><td>7</td><td>文件 + RAG</td><td>-</td><td>前置：OSS</td><td>未开始</td></tr>
+      <tr><td>8</td><td>Web 管理后台</td><td>-</td><td>前置：阶段 6</td><td>未开始</td></tr>
+      <tr><td>9</td><td>微信小程序</td><td>-</td><td>前置：微信 appid</td><td>未开始</td></tr>
+      <tr><td>10</td><td>联调与部署</td><td>-</td><td>前置：阶段 8、9</td><td>未开始</td></tr>
+    </table>
+  </section>
+
+  <!-- 阶段 0 -->
+  <section id="d0">
+    <h2>阶段 0：Monorepo 骨架</h2>
+    <div class="meta">
+      <span class="badge done">已完成</span>
+      <span class="pill">commit：chore: 阶段0 初始化 monorepo 骨架（9a06bc3）</span>
+      <span class="pill">日期：2026-09-16</span>
+    </div>
+    <h3>交付内容</h3>
+    <ul class="tasks">
+      <li>pnpm workspace 四包结构：<code>apps/server</code>、<code>apps/admin</code>（占位）、<code>apps/miniapp</code>（占位）、<code>packages/shared</code></li>
+      <li><code>packages/shared</code>：三端共享常量与类型（APP_NAME、ERROR_CODES、ApiResponse、Role）</li>
+      <li><code>apps/server</code>：TypeScript 严格模式 + NodeNext ESM 骨架，最简启动入口</li>
+      <li>规范工具链：ESLint 9（扁平配置）、Prettier、Husky（lint-staged + commitlint Conventional Commits）</li>
+      <li><code>pnpm-workspace.yaml</code> allowBuilds：prisma / esbuild 等构建脚本白名单（pnpm 11 适配）</li>
+    </ul>
+    <h3>验证结果</h3>
+    <ul class="checks">
+      <li class="done">pnpm install 成功；pnpm -r build 全绿；pnpm lint 通过</li>
+      <li class="done">首次 commit 触发 pre-commit 与 commit-msg 两个 hooks（commitlint 拦截实测有效）</li>
+    </ul>
+  </section>
+
+  <!-- 阶段 1 -->
+  <section id="d1">
+    <h2>阶段 1：数据层建模</h2>
+    <div class="meta">
+      <span class="badge done">已完成</span>
+      <span class="pill">commit：feat: 阶段1 prisma数据建模与种子数据（2ba2ba3）</span>
+      <span class="pill">日期：2026-09-16</span>
+    </div>
+    <h3>交付内容</h3>
+    <ul class="tasks">
+      <li><code>schema.prisma</code>：11 张表（tenants / users / classes / students / point_accounts / point_ledger / point_prices / agent_configs / ai_logs / ai_reports / knowledge_docs）</li>
+      <li>关键约束：<code>uk_biz (tenant_id, biz_id, change_type)</code> 积分幂等最后防线、<code>uk_tenant_openid</code> 微信登录幂等、point_prices / agent_configs 支持 tenant_id=0 全局行</li>
+      <li><code>prisma migrate dev</code> 迁移（本地 MySQL 8.0）</li>
+      <li><code>seed.ts</code>：默认租户"演示舞蹈艺术中心"、admin（13800000000 / admin123）、单价（report=10 / copywriting=5 / chat=1）、默认 Agent 配置</li>
+    </ul>
+    <h3>验证结果</h3>
+    <ul class="checks">
+      <li class="done">迁移成功，11 张表结构符合 plan.md 第 4 节 DDL</li>
+      <li class="done">seed 后可查到租户、admin、单价与 Agent 配置数据</li>
+    </ul>
+  </section>
+
+  <!-- 阶段 2 -->
+  <section id="d2">
+    <h2>阶段 2：后端底座</h2>
+    <div class="meta">
+      <span class="badge done">已完成</span>
+      <span class="pill">commit：feat: 阶段2 后端底座与多租户中间件（5f4d6f7）</span>
+      <span class="pill">日期：2026-09-16</span>
+    </div>
+    <h3>交付内容</h3>
+    <ul class="tasks">
+      <li>Express 4 + TypeScript 分层骨架（NodeNext ESM）</li>
+      <li><b>Prisma 租户扩展</b>：TENANT_MODELS 白名单自动注入 tenantId，where 展平合并强制覆盖、创建强制覆盖；<b>无上下文查询直接抛 TENANT_CONTEXT_MISSING</b>（比 plan 5.3 更严格）</li>
+      <li>AsyncLocalStorage 租户上下文 + tenantMiddleware（JWT 解析注入）</li>
+      <li>统一响应 ok()（递归 BigInt→Number）+ ApiError + 三级 error-handler + asyncHandler</li>
+      <li>pino / pino-http、zod 环境校验（失败即退出）、ioredis、/api/health 探活</li>
+      <li>验证脚本 <code>scripts/tenant-check.ts</code></li>
+    </ul>
+    <h3>验证结果</h3>
+    <ul class="checks">
+      <li class="done">服务启动成功（port 3000），Redis 连接正常</li>
+      <li class="done">无上下文查询被拦截（TENANT_CONTEXT_MISSING）</li>
+      <li class="done">上下文内查询自动过滤 tenantId</li>
+      <li class="done">传入其他租户 id 被强制覆盖；创建自动注入 tenantId</li>
+    </ul>
+    <h3>关键决策</h3>
+    <div class="note"><b>Prisma 惰性 Promise 陷阱</b>：tenantStorage.run 回调必须 async + await 查询，否则扩展执行时已脱离 AsyncLocalStorage 上下文。BigInt 统一在响应层 ok() 递归转 Number。</div>
+  </section>
+
+  <!-- 阶段 3 -->
+  <section id="d3">
+    <h2>阶段 3：鉴权模块</h2>
+    <div class="meta">
+      <span class="badge done">已完成</span>
+      <span class="pill">commit：feat: 阶段3 认证鉴权与RBAC（5405700）</span>
+      <span class="pill">日期：2026-09-16</span>
+    </div>
+    <h3>交付内容</h3>
+    <ul class="tasks">
+      <li><code>auth.jwt.ts</code>：issueTokens（access 2h + refresh 7d，type 声明防混用）、refresh 存 Redis auth:refresh:{userId}（EX 7 天）</li>
+      <li><code>auth.service.ts</code>：adminLogin（bcrypt、parent 拒绝、防账号枚举）、wxLogin（code2session + upsert）、refresh（Redis 一致性校验）、logout、me</li>
+      <li>登录前查询解法：runInLoginContext 显式注入临时上下文</li>
+      <li>5 接口：admin-login / wx-login / refresh / logout / me</li>
+      <li>RBAC：requireAuth（40001）+ requireRole（admin3 &gt; teacher2 &gt; parent1，不足 40003）</li>
+    </ul>
+    <h3>验证结果</h3>
+    <ul class="checks">
+      <li class="done">admin-login 返回 access + refresh 双 token</li>
+      <li class="done">/api/auth/me 带 token 正常；错 token 返回 40001</li>
+      <li class="done">logout 后旧 refresh 调 /refresh 失败（吊销生效）</li>
+      <li class="done">Redis 可查 auth:refresh:{userId}，TTL 约 604791 秒</li>
+      <li class="done">错误密码 40001；parent 越权 40003 留待阶段 6 业务接口验证</li>
+    </ul>
+    <h3>关键决策</h3>
+    <div class="note"><b>refresh payload 携带 tenantId / role</b>（plan 示意仅 userId）：否则刷新时无租户上下文无法重新签发，避免每次刷新查库。</div>
+  </section>
+
+  <!-- 阶段 4 -->
+  <section id="d4">
+    <h2>阶段 4：积分核心</h2>
+    <div class="meta">
+      <span class="badge done">已完成</span>
+      <span class="pill">commit：feat: 阶段4 积分账本核心（3813465）</span>
+      <span class="pill">日期：2026-09-16</span>
+    </div>
+    <h3>交付内容</h3>
+    <table>
+      <tr><th>模块</th><th>文件</th><th>说明</th></tr>
+      <tr><td>Lua 脚本</td><td><code>scripts/lua/deduct_points.lua</code></td><td>EXISTS 幂等锁 + 余额校验 + DECRBY + SET lock EX 300 原子执行</td></tr>
+      <tr><td>账本服务</td><td><code>points.service.ts</code></td><td>预热（SET NX）/ 扣减 / 回滚 / 充值 / 查余额</td></tr>
+      <tr><td>计价服务</td><td><code>price.service.ts</code></td><td>全局默认价 + 租户自定义价合并，租户行优先</td></tr>
+      <tr><td>五接口</td><td><code>points.controller.ts / routes.ts</code></td><td>balance / recharge / ledger / prices / prices-update（写操作全 POST）</td></tr>
+      <tr><td>定时对账</td><td><code>reconcile.job.ts</code></td><td>SCAN 遍历，以流水聚合为准修复 Redis + upsert point_accounts，每 60 秒</td></tr>
+      <tr><td>验证脚本</td><td><code>points-check.ts</code></td><td>覆盖验证清单 6 项（7 个断言）</td></tr>
+    </table>
+    <h3>验证结果（points-check.ts，7/7 PASS）</h3>
+    <ul class="checks">
+      <li class="done">充值 1000：余额精确 1000</li>
+      <li class="done">100 并发同额扣减：终值 = 初值 - 100 x 单价，无超发</li>
+      <li class="done">同 bizId 重复请求：返回 40902（幂等锁生效）</li>
+      <li class="done">余额不足：返回 40901</li>
+      <li class="done">删除 Redis 余额 key 后扣减：预热生效，不误判为 0</li>
+      <li class="done">AI 场景（先扣后回滚）：rollback + 补记 consume 流水生成，余额恢复</li>
+      <li class="done">对账后 Redis / MySQL / 流水聚合三者一致</li>
+    </ul>
+    <p>HTTP 实测：登录后 balance=0 → recharge +100 → ledger 可查 → prices 三条全局价 → prices/update 租户自定义价生效（chat 1→2，isCustom=true）。</p>
+    <h3>关键决策</h3>
+    <div class="warn"><b>修复 plan.md 失败路径账目缺陷</b>：plan 6.4 中 consume 流水仅在 AI 成功时写入，失败路径只写 rollback 正向流水（+amount）而无对应负向流水——流水聚合比真实余额多出回滚金额，对账会把差额"修复"进 Redis，<b>每次 AI 失败都白送用户积分</b>（实测复现：真实余额 899 被修复为 949）。修复：rollbackPoints 回滚时先补写原扣减的 consume 流水（-amount，占住 uk_biz 幂等位），再写 rollback 反向流水，借贷相抵。</div>
+    <div class="note"><b>BullMQ v6 API 适配</b>：Queue.add 已移除 repeat 选项，改用 upsertJobScheduler 注册每 60 秒对账任务。</div>
+  </section>
+
+  <a class="backtop" href="#" title="返回顶部">&#8679;</a>
+</main>
+
+</body>
+</html>

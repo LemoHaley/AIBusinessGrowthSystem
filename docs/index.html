@@ -124,10 +124,10 @@
   </div>
   <nav id="nav">
     <a href="#phase-0">阶段 0 Monorepo 骨架 <span class="st done">已完成</span></a>
-    <a href="#phase-1">阶段 1 数据层建模 <span class="st todo">未开始</span></a>
-    <a href="#phase-2">阶段 2 后端底座 <span class="st todo">未开始</span></a>
-    <a href="#phase-3">阶段 3 鉴权模块 <span class="st todo">未开始</span></a>
-    <a href="#phase-4">阶段 4 积分核心 <span class="st todo">未开始</span></a>
+    <a href="#phase-1">阶段 1 数据层建模 <span class="st done">已完成</span></a>
+    <a href="#phase-2">阶段 2 后端底座 <span class="st done">已完成</span></a>
+    <a href="#phase-3">阶段 3 鉴权模块 <span class="st done">已完成</span></a>
+    <a href="#phase-4">阶段 4 积分核心 <span class="st done">已完成</span></a>
     <a href="#phase-5">阶段 5 AI 中台 <span class="st todo">未开始</span></a>
     <a href="#phase-6">阶段 6 业务闭环 <span class="st todo">未开始</span></a>
     <a href="#phase-7">阶段 7 文件 + RAG <span class="st todo">未开始</span></a>
@@ -197,9 +197,9 @@
     <h2>阶段 1：数据层建模</h2>
     <p class="subtitle">对应 plan.md 任务 1.3（第 4 节 DDL）</p>
     <div class="meta">
-      <span class="badge todo">未开始</span>
+      <span class="badge done">已完成</span>
       <span class="pill">前置：阶段 0</span>
-      <span class="pill">提交：feat: 阶段1 prisma数据建模与种子数据</span>
+      <span class="pill">提交：feat: 阶段1 prisma数据建模与种子数据（2ba2ba3）</span>
     </div>
     <h3>目标</h3>
     <p>将 plan.md 第 4 节的 11 张表 DDL 转换为 Prisma schema，在本地 MySQL 建表并灌入种子数据。这是全部后端代码的地基。</p>
@@ -248,9 +248,9 @@
     <h2>阶段 2：后端底座</h2>
     <p class="subtitle">对应 plan.md 任务 1.2、1.4（第 1.2、5.1、5.2、5.3 节）</p>
     <div class="meta">
-      <span class="badge todo">未开始</span>
+      <span class="badge done">已完成</span>
       <span class="pill">前置：阶段 1</span>
-      <span class="pill">提交：feat: 阶段2 后端底座与多租户中间件</span>
+      <span class="pill">提交：feat: 阶段2 后端底座与多租户中间件（5f4d6f7）</span>
     </div>
     <h3>目标</h3>
     <p>搭建 Express 分层骨架与多租户底座，核心是 Prisma 租户扩展——后续所有业务模块在此之上开发，租户隔离不依赖开发者自觉。</p>
@@ -314,9 +314,9 @@
     <h2>阶段 3：鉴权模块</h2>
     <p class="subtitle">对应 plan.md 任务 1.5（第 5.4、5.5 节）</p>
     <div class="meta">
-      <span class="badge todo">未开始</span>
+      <span class="badge done">已完成</span>
       <span class="pill">前置：阶段 2</span>
-      <span class="pill">提交：feat: 阶段3 认证鉴权与RBAC</span>
+      <span class="pill">提交：feat: 阶段3 认证鉴权与RBAC（5405700）</span>
     </div>
     <h3>目标</h3>
     <p>双端登录（小程序微信 + 后台账号密码）、token 签发/刷新/吊销、RBAC 角色守卫。</p>
@@ -361,10 +361,10 @@
     <h2>阶段 4：积分核心</h2>
     <p class="subtitle">对应 plan.md 任务 2.3-2.5（第 7 节）</p>
     <div class="meta">
-      <span class="badge todo">未开始</span>
+      <span class="badge done">已完成</span>
       <span class="pill">前置：阶段 2</span>
       <span class="pill">凭证：本地 Redis 即可</span>
-      <span class="pill">提交：feat: 阶段4 积分账本核心</span>
+      <span class="pill">提交：feat: 阶段4 积分账本核心（3813465）</span>
     </div>
     <h3>目标</h3>
     <p>积分账本核心闭环：Lua 原子扣减（防超发）、余额缓存预热（防误判 0）、失败回滚、定时对账、充值与计价接口。本阶段全部本地可验证，不依赖 AI 服务。</p>

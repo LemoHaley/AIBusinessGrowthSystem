@@ -33,7 +33,9 @@
 ├── docs
 │   ├── phases/       # 各阶段开发文档
 │   ├── all-phases.html  # 阶段 0-10 合集浏览页
-│   └── index.html    # 阶段文档聚合浏览页
+│   ├── index.html    # 阶段文档聚合浏览页
+│   ├── deliveries.md # 各阶段交付记录（完成后追加）
+│   └── deliveries.html # 交付记录浏览页
 ├── ROADMAP.md        # 开发执行路线图
 └── plan.md           # 设计蓝图（唯一事实来源，位于 docs/phases/）
 ```
@@ -62,7 +64,7 @@ pnpm --filter @artedu/server dev
 
 ## 开发路线
 
-项目按 11 个阶段推进，详见 [ROADMAP.md](./ROADMAP.md) 与 [docs/all-phases.html](./docs/all-phases.html)：
+项目按 11 个阶段推进，详见 [ROADMAP.md](./ROADMAP.md) 与 [docs/all-phases.html](./docs/all-phases.html)；各已完成阶段的交付内容与验证结果记录在 [docs/deliveries.md](./docs/deliveries.md)（每完成一个阶段追加一节）：
 
 | 阶段 | 名称                                                     | 状态   |
 | :--- | :------------------------------------------------------- | :----- |
