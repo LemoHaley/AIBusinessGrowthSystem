@@ -10,6 +10,7 @@ import { tenantMiddleware } from './middleware/tenant.js';
 import { errorHandler, notFoundHandler } from './middleware/error-handler.js';
 import { authRoutes } from './modules/auth/auth.routes.js';
 import { healthRoutes } from './modules/health/health.routes.js';
+import { pointsRoutes } from './modules/points/points.routes.js';
 
 export function createApp(): Express {
   const app = express();
@@ -21,6 +22,7 @@ export function createApp(): Express {
   // 业务路由（各阶段完成一个模块在此追加挂载）
   app.use('/api/health', healthRoutes);
   app.use('/api/auth', authRoutes);
+  app.use('/api/points', pointsRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

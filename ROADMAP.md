@@ -11,7 +11,7 @@
 | 1    | 数据层建模    | 0    | migrate 建表成功，seed 数据可查        | 已完成 |
 | 2    | 后端底座      | 1    | 服务启动；无租户上下文查询抛错         | 已完成 |
 | 3    | 鉴权模块      | 2    | curl 登录拿 token，错 token 返回 40001 | 已完成 |
-| 4    | 积分核心      | 2    | 100 并发扣减不超发，同 bizId 只扣一次  | 未开始 |
+| 4    | 积分核心      | 2    | 100 并发扣减不超发，同 bizId 只扣一次  | 已完成 |
 | 5    | AI 中台       | 4    | curl 收到 SSE chunk + done 事件        | 未开始 |
 | 6    | 业务闭环      | 5    | 一次生成落三表记录；parent 越权被拦    | 未开始 |
 | 7    | 文件 + RAG    | 5    | 文档上传后 status 变"已索引"           | 未开始 |
@@ -84,14 +84,15 @@
 
 **任务**：
 
-- [ ] `deduct_points.lua`（第 7.2 节）
-- [ ] deductPoints + ensureBalanceLoaded 余额预热（第 7.3 节，SET NX）
-- [ ] rollbackPoints 失败回滚（第 7.4 节，反向流水）
-- [ ] BullMQ 对账任务（第 7.5 节，SCAN 遍历）
-- [ ] 充值接口（Redis INCRBY + recharge 流水）
-- [ ] point_prices 读写接口（全局默认价 + 租户自定义价）
+- [x] `deduct_points.lua`（第 7.2 节）
+- [x] deductPoints + ensureBalanceLoaded 余额预热（第 7.3 节，SET NX）
+- [x] rollbackPoints 失败回滚（第 7.4 节，反向流水；补记 consume 流水保证账目平衡）
+- [x] BullMQ 对账任务（第 7.5 节，SCAN 遍历；BullMQ v6 适配 upsertJobScheduler）
+- [x] 充值接口（Redis INCRBY + recharge 流水）
+- [x] point_prices 读写接口（全局默认价 + 租户自定义价）
 
 **完成标准**：模拟 100 并发扣减余额精确无超发；同 bizId 重复请求返回 40902；余额不足返回 40901。
+（验证脚本 `apps/server/scripts/points-check.ts` 全部通过：充值 / 100 并发 / 幂等 / 不足 / 预热 / 回滚 / 对账 7 项 PASS）
 **提交**：`feat: 阶段4 积分账本核心`
 
 ## 阶段 5：AI 中台（对应 plan.md 任务 2.1、2.2）
