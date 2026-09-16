@@ -1,0 +1,216 @@
+// ArtEdu AI 数据模型（对应 plan.md 第 4 节 DDL，11 张表）
+// 多租户表必须带 tenantId，由阶段 2 的 Prisma 租户扩展自动注入
+// point_ledger 的 uk_biz 是幂等性最后防线：即使 Redis 幂等锁失效，数据库唯一约束也拒绝重复流水
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户角色：admin(管理员) > teacher(老师) > parent(家长)
+enum Role {
+  admin
+  teacher
+  parent
+}
+
+// 积分流水类型：MVP 无预扣，失败走 rollback 反向流水；freeze/unfreeze 留待二期
+enum ChangeType {
+  recharge
+  consume
+  rollback
+}
+
+// AI 服务商
+enum AgentProvider {
+  coze
+  dify
+  openai
+}
+
+// 报告类型
+enum ReportType {
+  daily
+  weekly
+  monthly
+}
+
+// 1. 租户表（机构）
+model Tenant {
+  id        BigInt    @id @default(autoincrement())
+  name      String     @db.VarChar(128) // 机构名称
+  logo      String?    @db.VarChar(255)
+  contact   String?    @db.VarChar(64) // 联系方式
+  expireAt  DateTime?  @map("expire_at") @db.DateTime(3) // 服务到期时间（SaaS 试用期管理）
+  status    Int        @default(1) @db.TinyInt // 1:正常 0:禁用
+  createdAt DateTime  @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.DateTime(3)
+
+  @@map("tenants")
+}
+
+// 2. 用户表（机构管理员、老师、家长）
+model User {
+  id        BigInt    @id @default(autoincrement())
+  tenantId  BigInt    @map("tenant_id") // 所属租户
+  openid    String?   @db.VarChar(64) // 微信 openid
+  phone     String?   @db.VarChar(20)
+  nickname  String?   @db.VarChar(64)
+  avatar    String?   @db.VarChar(255)
+  password  String?   @db.VarChar(128) // 后台登录密码（bcrypt，仅 admin/teacher）
+  role      Role      @default(parent)
+  status    Int       @default(1) @db.TinyInt
+  createdAt DateTime  @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.DateTime(3)
+
+  @@unique([tenantId, openid], map: "uk_tenant_openid")
+  @@index([tenantId, role], map: "idx_tenant_role")
+  @@map("users")
+}
+
+// 3. 班级表
+model Class {
+  id        BigInt    @id @default(autoincrement())
+  tenantId  BigInt    @map("tenant_id")
+  name      String    @db.VarChar(64) // 班级名称
+  teacherId BigInt?   @map("teacher_id") // 负责老师
+  status    Int       @default(1) @db.TinyInt
+  createdAt DateTime  @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.DateTime(3)
+
+  @@index([tenantId], map: "idx_tenant")
+  @@map("classes")
+}
+
+// 4. 学员表
+model Student {
+  id          BigInt   @id @default(autoincrement())
+  tenantId    BigInt   @map("tenant_id")
+  name        String   @db.VarChar(64)
+  parentUserId BigInt? @map("parent_user_id") // 关联家长用户
+  classId     BigInt? @map("class_id") // 所属班级
+  level       String? @db.VarChar(32) // 级别
+  status      Int      @default(1) @db.TinyInt
+  createdAt   DateTime @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.DateTime(3)
+
+  @@index([tenantId, classId], map: "idx_tenant_class")
+  @@index([parentUserId], map: "idx_parent")
+  @@map("students")
+}
+
+// 5. 积分账户表
+model PointAccount {
+  id        BigInt   @id @default(autoincrement())
+  tenantId  BigInt   @map("tenant_id")
+  userId    BigInt   @map("user_id")
+  balance   Int      @default(0) // 可用余额
+  version   Int      @default(0) // 乐观锁
+  updatedAt DateTime @updatedAt @map("updated_at") @db.DateTime(3)
+
+  @@unique([tenantId, userId], map: "uk_tenant_user")
+  @@map("point_accounts")
+}
+
+// 6. 积分流水表（核心账本，只增不改）
+model PointLedger {
+  id            BigInt     @id @default(autoincrement())
+  tenantId      BigInt     @map("tenant_id")
+  userId        BigInt     @map("user_id")
+  changeType    ChangeType @map("change_type")
+  changeAmount  Int        @map("change_amount") // 正数增加，负数减少
+  balanceAfter  Int        @map("balance_after") // 变更后余额快照
+  bizId         String     @map("biz_id") @db.VarChar(64) // 业务单号（幂等键）
+  bizType       String?    @map("biz_type") @db.VarChar(32) // 业务类型：ai_report, ai_chat, recharge 等
+  remark        String?    @db.VarChar(255)
+  createdAt     DateTime   @default(now()) @map("created_at") @db.DateTime(3)
+
+  @@unique([tenantId, bizId, changeType], map: "uk_biz")
+  @@index([tenantId, userId, createdAt], map: "idx_tenant_user_time")
+  @@map("point_ledger")
+}
+
+// 7. 计费配置表（AI 调用单价）
+model PointPrice {
+  id        BigInt   @id @default(autoincrement())
+  agentType String   @map("agent_type") @db.VarChar(32) // agent 类型：report/copywriting/chat
+  price     Int // 每次调用消耗积分
+  tenantId  BigInt   @default(0) @map("tenant_id") // 0 表示全局默认价，非 0 为租户自定义价
+  status    Int      @default(1) @db.TinyInt
+  updatedAt DateTime @updatedAt @map("updated_at") @db.DateTime(3)
+
+  @@unique([agentType, tenantId], map: "uk_agent_tenant")
+  @@map("point_prices")
+}
+
+// 8. AI Agent 配置表（可在线切换 provider/bot，无需重新部署）
+model AgentConfig {
+  id             BigInt        @id @default(autoincrement())
+  agentType      String        @map("agent_type") @db.VarChar(32) // report/copywriting/chat
+  provider       AgentProvider @default(coze)
+  botId          String?       @map("bot_id") @db.VarChar(128) // Coze bot id / Dify app id
+  model          String?       @db.VarChar(64) // OpenAI/DeepSeek 模型名
+  promptTemplate String?       @map("prompt_template") @db.Text // 系统 Prompt 模板（支持变量插值）
+  tenantId       BigInt        @default(0) @map("tenant_id") // 0 表示全局默认配置
+  status         Int           @default(1) @db.TinyInt
+  updatedAt      DateTime      @updatedAt @map("updated_at") @db.DateTime(3)
+
+  @@unique([agentType, tenantId], map: "uk_agent_tenant")
+  @@map("agent_configs")
+}
+
+// 9. AI 调用日志表
+model AiLog {
+  id           BigInt   @id @default(autoincrement())
+  tenantId     BigInt   @map("tenant_id")
+  userId       BigInt?  @map("user_id")
+  agentType    String?  @map("agent_type") @db.VarChar(32)
+  prompt       String?  @db.Text // 输入提示词
+  response     String?  @db.Text // 模型输出
+  tokensInput  Int?     @map("tokens_input")
+  tokensOutput Int?     @map("tokens_output")
+  costPoints   Int?     @map("cost_points") // 本次消耗积分
+  durationMs   Int?     @map("duration_ms")
+  status       Int      @default(1) @db.TinyInt // 1:成功 0:失败
+  createdAt    DateTime @default(now()) @map("created_at") @db.DateTime(3)
+
+  @@index([tenantId, createdAt], map: "idx_tenant_time")
+  @@index([tenantId, agentType, createdAt], map: "idx_tenant_agent_time") // 看板按 agent + 时间聚合
+  @@map("ai_logs")
+}
+
+// 10. RAG 知识库文档表
+model KnowledgeDoc {
+  id         BigInt   @id @default(autoincrement())
+  tenantId   BigInt   @map("tenant_id")
+  name       String?  @db.VarChar(128)
+  fileUrl    String?  @map("file_url") @db.VarChar(255)
+  fileType   String?  @map("file_type") @db.VarChar(16)
+  documentId String?  @map("document_id") @db.VarChar(128) // Coze/Dify 返回的文档 ID
+  status     Int      @default(0) @db.TinyInt // 0:待处理 1:已索引 2:失败
+  createdAt  DateTime @default(now()) @map("created_at") @db.DateTime(3)
+
+  @@index([tenantId], map: "idx_tenant")
+  @@map("knowledge_docs")
+}
+
+// 11. AI 报告/点评表
+model AiReport {
+  id         BigInt     @id @default(autoincrement())
+  tenantId   BigInt     @map("tenant_id")
+  studentId  BigInt     @map("student_id")
+  teacherId  BigInt?    @map("teacher_id")
+  classId    BigInt?    @map("class_id")
+  content    String?    @db.Text // AI 生成的点评/报告（Markdown）
+  reportType ReportType @default(daily) @map("report_type")
+  costPoints Int        @default(0) @map("cost_points") // 本次生成消耗积分
+  status     Int        @default(1) @db.TinyInt // 0:生成中 1:已完成 2:失败
+  createdAt  DateTime   @default(now()) @map("created_at") @db.DateTime(3)
+
+  @@index([tenantId, studentId], map: "idx_tenant_student")
+  @@map("ai_reports")
+}

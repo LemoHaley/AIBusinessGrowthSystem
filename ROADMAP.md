@@ -8,7 +8,7 @@
 | 阶段 | 名称          | 前置 | 完成标准                               | 状态   |
 | :--- | :------------ | :--- | :------------------------------------- | :----- |
 | 0    | Monorepo 骨架 | -    | `pnpm -r build` 全绿，hooks 生效       | 已完成 |
-| 1    | 数据层建模    | 0    | migrate 建表成功，seed 数据可查        | 未开始 |
+| 1    | 数据层建模    | 0    | migrate 建表成功，seed 数据可查        | 已完成 |
 | 2    | 后端底座      | 1    | 服务启动；无租户上下文查询抛错         | 未开始 |
 | 3    | 鉴权模块      | 2    | curl 登录拿 token，错 token 返回 40001 | 未开始 |
 | 4    | 积分核心      | 2    | 100 并发扣减不超发，同 bizId 只扣一次  | 未开始 |
@@ -44,9 +44,9 @@
 
 **任务**：
 
-- [ ] 按第 4 节 DDL 编写 `apps/server/prisma/schema.prisma`（含 uk_biz 幂等唯一键、idx_tenant_agent_time 复合索引、point_prices/agent_configs 的 tenant_id=0 全局行）
-- [ ] `prisma migrate dev` 建表（本地 MySQL）
-- [ ] seed 脚本：默认租户 + admin 账号 + 默认计费单价 + 默认 Agent 配置
+- [x] 按第 4 节 DDL 编写 `apps/server/prisma/schema.prisma`（含 uk_biz 幂等唯一键、idx_tenant_agent_time 复合索引、point_prices/agent_configs 的 tenant_id=0 全局行）
+- [x] `prisma migrate dev` 建表（本地 MySQL）
+- [x] seed 脚本：默认租户 + admin 账号 + 默认计费单价 + 默认 Agent 配置
 
 **完成标准**：迁移成功；seed 后能查到默认数据。
 **提交**：`feat: 阶段1 prisma数据建模与种子数据`

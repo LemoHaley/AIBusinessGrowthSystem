@@ -4,6 +4,11 @@ packages:
   # 共享包
   - 'packages/*'
 
-# 允许 esbuild 运行构建脚本（tsx 的二进制依赖）
+# 允许运行构建脚本的依赖（pnpm 11 安全机制）
 allowBuilds:
-  esbuild: true
+  '@prisma/client': true # prisma 客户端（生成引擎）
+  '@prisma/engines': true # prisma 引擎包
+  esbuild: true # tsx 的二进制依赖
+  msgpackr-extract: true # prisma 依赖
+  prisma: true # prisma CLI（下载引擎二进制）
+  workerd: true # prisma 依赖

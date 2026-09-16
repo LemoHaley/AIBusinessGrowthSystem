@@ -8,10 +8,17 @@
     "dev": "tsx watch src/main.ts",
     "start": "node dist/main.js"
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "dependencies": {
-    "@artedu/shared": "workspace:*"
+    "@artedu/shared": "workspace:*",
+    "@prisma/client": "^6.19.3",
+    "bcryptjs": "^3.0.3"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
+    "prisma": "6.19.3",
     "tsx": "^4.23.13"
   }
 }
