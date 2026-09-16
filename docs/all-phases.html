@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArtEdu AI 开发阶段合集（阶段 0-10）</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --sidebar: #16202e;
+    --border: #e5e7eb;
+    --text: #1f2937;
+    --muted: #6b7280;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Segoe UI", "Microsoft YaHei", -apple-system, sans-serif;
+    color: var(--text);
+    background: #f9fafb;
+  }
+  aside {
+    position: fixed; left: 0; top: 0; bottom: 0;
+    width: 250px; background: var(--sidebar);
+    overflow-y: auto; padding: 24px 0;
+  }
+  aside .brand { padding: 0 20px 18px; border-bottom: 1px solid rgba(255,255,255,.08); }
+  aside .brand h1 { color: #fff; font-size: 17px; margin-bottom: 4px; }
+  aside .brand p { color: #7d8ba1; font-size: 12px; }
+  nav { padding: 12px 0; }
+  nav a {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 20px; color: #cbd5e1; text-decoration: none;
+    font-size: 13.5px; border-left: 3px solid transparent;
+  }
+  nav a:hover { background: rgba(255,255,255,.06); color: #fff; }
+  nav a.active { border-left-color: var(--primary); color: #fff; background: rgba(37,99,235,.18); }
+  nav a .st { font-size: 11px; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+  nav a .st.done { background: #14532d; color: #86efac; }
+  nav a .st.todo { background: rgba(255,255,255,.12); color: #94a3b8; }
+  main { margin-left: 250px; padding: 44px 52px 80px; max-width: 1020px; }
+  .doc-header { margin-bottom: 36px; }
+  .doc-header h1 { font-size: 26px; margin-bottom: 10px; }
+  .doc-header p { color: var(--muted); line-height: 1.7; font-size: 14.5px; }
+  section {
+    background: #fff; border: 1px solid var(--border); border-radius: 12px;
+    padding: 30px 36px; margin-bottom: 34px;
+  }
+  section h2 {
+    font-size: 20px; border-left: 4px solid var(--primary);
+    padding-left: 13px; margin-bottom: 6px;
+  }
+  section h3 { font-size: 15.5px; margin: 24px 0 10px; color: #111827; }
+  section h4 { font-size: 14px; margin: 16px 0 8px; color: #374151; }
+  .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+  .meta { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0 6px; }
+  .badge { font-size: 12px; padding: 3px 12px; border-radius: 999px; font-weight: 500; }
+  .badge.done { background: #dcfce7; color: #166534; }
+  .badge.todo { background: #f1f5f9; color: #475569; }
+  .pill {
+    font-size: 12px; padding: 3px 12px; border-radius: 999px;
+    background: #f8fafc; border: 1px solid var(--border); color: #475569;
+  }
+  p { line-height: 1.75; font-size: 14px; margin: 8px 0; }
+  ul.tasks { margin: 6px 0 6px 4px; }
+  ul.tasks li { line-height: 1.75; font-size: 14px; margin: 3px 0 3px 20px; }
+  ol.tasks li { line-height: 1.75; font-size: 14px; margin: 3px 0 3px 6px; }
+  ul.checks { margin-top: 6px; }
+  ul.checks li {
+    list-style: none; position: relative; padding-left: 28px;
+    margin: 7px 0; font-size: 14px; line-height: 1.65;
+  }
+  ul.checks li::before {
+    content: ''; position: absolute; left: 0; top: 4px;
+    width: 15px; height: 15px; border: 1.5px solid #94a3b8; border-radius: 4px;
+  }
+  ul.checks li.done::before { border-color: #16a34a; background: #16a34a; }
+  ul.checks li.done::after {
+    content: ''; position: absolute; left: 4px; top: 7px;
+    width: 7px; height: 4px; border-left: 2px solid #fff; border-bottom: 2px solid #fff;
+    transform: rotate(-45deg);
+  }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; line-height: 1.6; }
+  th { background: #f1f5f9; font-weight: 600; }
+  tr:nth-child(even) td { background: #fafbfc; }
+  code {
+    background: #f1f5f9; padding: 2px 6px; border-radius: 4px;
+    font-family: Consolas, "Courier New", monospace; font-size: 12.5px; color: #b91c1c;
+  }
+  pre {
+    background: #f8fafc; border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 18px; overflow-x: auto; margin: 12px 0;
+  }
+  pre code { background: none; padding: 0; color: #334155; font-size: 12.5px; line-height: 1.7; }
+  .note {
+    background: #eff6ff; border-left: 4px solid var(--primary);
+    padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 14px 0;
+    font-size: 13.5px; line-height: 1.7;
+  }
+  .warn {
+    background: #fffbeb; border-left: 4px solid #d97706;
+    padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 14px 0;
+    font-size: 13.5px; line-height: 1.7;
+  }
+  .backtop {
+    position: fixed; right: 28px; bottom: 28px; width: 40px; height: 40px;
+    border-radius: 50%; background: var(--primary); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none; font-size: 18px; box-shadow: 0 4px 12px rgba(37,99,235,.4);
+  }
+  .backtop:hover { background: #1d4ed8; }
+  @media (max-width: 900px) {
+    aside { display: none; }
+    main { margin-left: 0; padding: 24px 18px 60px; }
+  }
+  @media print {
+    aside, .backtop { display: none; }
+    main { margin: 0; }
+    section { break-inside: avoid-page; }
+  }
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="brand">
+    <h1>ArtEdu AI</h1>
+    <p>开发阶段合集（阶段 0-10）</p>
+  </div>
+  <nav id="nav">
+    <a href="#overview">阶段总览</a>
+    <a href="#phase-0">阶段 0 Monorepo 骨架 <span class="st done">已完成</span></a>
+    <a href="#phase-1">阶段 1 数据层建模 <span class="st todo">未开始</span></a>
+    <a href="#phase-2">阶段 2 后端底座 <span class="st todo">未开始</span></a>
+    <a href="#phase-3">阶段 3 鉴权模块 <span class="st todo">未开始</span></a>
+    <a href="#phase-4">阶段 4 积分核心 <span class="st todo">未开始</span></a>
+    <a href="#phase-5">阶段 5 AI 中台 <span class="st todo">未开始</span></a>
+    <a href="#phase-6">阶段 6 业务闭环 <span class="st todo">未开始</span></a>
+    <a href="#phase-7">阶段 7 文件 + RAG <span class="st todo">未开始</span></a>
+    <a href="#phase-8">阶段 8 Web 管理后台 <span class="st todo">未开始</span></a>
+    <a href="#phase-9">阶段 9 微信小程序 <span class="st todo">未开始</span></a>
+    <a href="#phase-10">阶段 10 联调与部署 <span class="st todo">未开始</span></a>
+    <a href="#discipline">执行纪律</a>
+  </nav>
+</aside>
+
+<main>
+  <div class="doc-header">
+    <h1>ArtEdu AI 经营增长系统 - 开发阶段合集</h1>
+    <p>本文档收录阶段 0 至阶段 10 的全部开发规划：每阶段包含目标、前置条件、任务分解（文件/接口级）、验证清单与提交节点。
+    配合 <code>plan.md</code>（设计蓝图，唯一事实来源）与 <code>ROADMAP.md</code>（执行清单）使用。
+    按依赖链推进，每阶段结束系统必须可运行、可验证，并形成独立 commit。</p>
+  </div>
+
+  <!-- 阶段总览 -->
+  <section id="overview">
+    <h2>阶段总览</h2>
+    <p class="subtitle">与 plan.md 周序的两处刻意调整：积分核心（阶段 4）先于 AI 网关（阶段 5），积分纯本地可验证；
+    前端（阶段 8/9）压轴，等后端接口与 shared 类型稳定后动工，避免联调返工。</p>
+    <table>
+      <tr><th>阶段</th><th>名称</th><th>前置</th><th>完成标准</th><th>状态</th></tr>
+      <tr><td>0</td><td>Monorepo 骨架</td><td>-</td><td>pnpm -r build 全绿，hooks 生效</td><td>已完成</td></tr>
+      <tr><td>1</td><td>数据层建模</td><td>0</td><td>migrate 建表成功，seed 数据可查</td><td>未开始</td></tr>
+      <tr><td>2</td><td>后端底座</td><td>1</td><td>服务启动；无租户上下文查询抛错</td><td>未开始</td></tr>
+      <tr><td>3</td><td>鉴权模块</td><td>2</td><td>curl 登录拿 token，错 token 返回 40001</td><td>未开始</td></tr>
+      <tr><td>4</td><td>积分核心</td><td>2</td><td>100 并发扣减不超发，同 bizId 只扣一次</td><td>未开始</td></tr>
+      <tr><td>5</td><td>AI 中台</td><td>4</td><td>curl 收到 SSE chunk + done 事件</td><td>未开始</td></tr>
+      <tr><td>6</td><td>业务闭环</td><td>5</td><td>一次生成落三表记录；parent 越权被拦</td><td>未开始</td></tr>
+      <tr><td>7</td><td>文件 + RAG</td><td>5</td><td>文档上传后 status 变"已索引"</td><td>未开始</td></tr>
+      <tr><td>8</td><td>Web 管理后台</td><td>6</td><td>浏览器端到端可操作</td><td>未开始</td></tr>
+      <tr><td>9</td><td>微信小程序</td><td>6</td><td>开发者工具跑通全链路</td><td>未开始</td></tr>
+      <tr><td>10</td><td>联调与部署</td><td>8、9</td><td>docker compose up 一键起</td><td>未开始</td></tr>
+    </table>
+  </section>
+
+  <!-- 阶段 0 -->
+  <section id="phase-0">
+    <h2>阶段 0：Monorepo 骨架</h2>
+    <p class="subtitle">对应 plan.md 任务 1.1</p>
+    <div class="meta">
+      <span class="badge done">已完成</span>
+      <span class="pill">前置：无</span>
+      <span class="pill">提交：chore: 阶段0 初始化 monorepo 骨架（9a06bc3）</span>
+    </div>
+    <h3>目标</h3>
+    <p>建立 pnpm workspace 四包结构与代码规范工具链，使后续所有阶段的代码在统一工程规范下开发。</p>
+    <h3>实际产出</h3>
+<pre><code>AIBusinessGrowthSystem/
+├── apps/
+│   ├── server/              @artedu/server   Express + TS 后端（最简入口）
+│   ├── admin/               @artedu/admin    占位（阶段 8 初始化 Vite）
+│   └── miniapp/             @artedu/miniapp 占位（阶段 9 初始化 uni-app）
+├── packages/
+│   └── shared/              @artedu/shared   三端共享 TS 包
+├── pnpm-workspace.yaml      apps/* + packages/*；allowBuilds: esbuild
+├── tsconfig.base.json       TS 严格模式基线（ES2022 + NodeNext）
+├── eslint.config.js         ESLint 扁平配置 + typescript-eslint
+├── commitlint.config.js     Conventional Commits
+├── .prettierrc / .prettierignore
+└── .husky/pre-commit + commit-msg</code></pre>
+    <h4>配置要点</h4>
+    <ul class="tasks">
+      <li>server 通过 <code>"@artedu/shared": "workspace:*"</code> 显式引用共享包（pnpm 11 不自动链接）</li>
+      <li>dev 脚本：<code>tsx watch src/main.ts</code> 热更新</li>
+      <li>pre-commit：lint-staged（eslint --fix + prettier --write）</li>
+      <li>commit-msg：commitlint（中文描述，如 feat: 阶段3 ...）</li>
+    </ul>
+    <h3>验证结果（全部通过）</h3>
+    <ul class="checks">
+      <li class="done">pnpm install 成功（含 workspace 链接）</li>
+      <li class="done">pnpm -r build：shared + server 编译通过</li>
+      <li class="done">pnpm lint 通过</li>
+      <li class="done">两次提交均触发 hooks（lint-staged 处理 16 个文件，commitlint 校验通过）</li>
+    </ul>
+    <h3>环境备忘（Windows）</h3>
+    <ul class="tasks">
+      <li>PowerShell 不支持 &amp;&amp;，链式命令用 ;</li>
+      <li>pnpm 11 不自动链接 workspace 包，必须显式 workspace:* 协议</li>
+      <li>TypeScript 锁定 6.x：typescript-eslint 暂不支持 TS 7</li>
+      <li>沙箱环境拒绝写 .git/objects，git 提交需在非沙箱模式执行</li>
+    </ul>
+  </section>
+
+  <!-- 阶段 1 -->
+  <section id="phase-1">
+    <h2>阶段 1：数据层建模</h2>
+    <p class="subtitle">对应 plan.md 任务 1.3（第 4 节 DDL）</p>
+    <div class="meta">
+      <span class="badge todo">未开始</span>
+      <span class="pill">前置：阶段 0</span>
+      <span class="pill">提交：feat: 阶段1 prisma数据建模与种子数据</span>
+    </div>
+    <h3>目标</h3>
+    <p>将 plan.md 第 4 节的 11 张表 DDL 转换为 Prisma schema，在本地 MySQL 建表并灌入种子数据。这是全部后端代码的地基。</p>
+    <div class="warn"><b>前置条件</b>：本地 MySQL 8.0 可用；连接参数写入 apps/server/.env（已被 .gitignore 排除，不入库）。</div>
+    <h3>任务分解</h3>
+    <h4>1.1 安装 Prisma 并初始化</h4>
+    <ul class="tasks">
+      <li><code>pnpm --filter @artedu/server add -D prisma</code> + <code>add @prisma/client</code></li>
+      <li><code>npx prisma init</code>：生成 prisma/schema.prisma 与 .env 模板；datasource 配置 mysql</li>
+    </ul>
+    <h4>1.2 编写 schema.prisma（11 张表）</h4>
+    <table>
+      <tr><th>表</th><th>说明</th><th>关键约束</th></tr>
+      <tr><td>tenants</td><td>租户（机构）</td><td>expire_at 服务到期管理</td></tr>
+      <tr><td>users</td><td>用户</td><td>uk (tenant_id, openid)；role: admin/teacher/parent</td></tr>
+      <tr><td>classes</td><td>班级</td><td>idx (tenant_id)</td></tr>
+      <tr><td>students</td><td>学员</td><td>parent_user_id 关联家长；idx (parent_user_id)</td></tr>
+      <tr><td>point_accounts</td><td>积分账户</td><td>uk (tenant_id, user_id)；无 frozen 字段（二期）</td></tr>
+      <tr><td>point_ledger</td><td>积分流水（只增不改）</td><td>uk_biz (tenant_id, biz_id, change_type) 幂等防线；change_type: recharge/consume/rollback</td></tr>
+      <tr><td>point_prices</td><td>计费单价</td><td>tenant_id=0 全局默认（不用 NULL：唯一索引对 NULL 不去重）</td></tr>
+      <tr><td>agent_configs</td><td>Agent 配置</td><td>tenant_id=0 同上；provider: coze/dify/openai</td></tr>
+      <tr><td>ai_logs</td><td>AI 调用日志</td><td>idx_tenant_time + idx_tenant_agent_time</td></tr>
+      <tr><td>knowledge_docs</td><td>RAG 文档</td><td>document_id 存第三方返回 ID</td></tr>
+      <tr><td>ai_reports</td><td>AI 报告/点评</td><td>idx (tenant_id, student_id)</td></tr>
+    </table>
+    <h4>1.3 执行迁移</h4>
+    <ul class="tasks"><li><code>npx prisma migrate dev --name init</code></li></ul>
+    <h4>1.4 种子脚本（prisma/seed.ts）</h4>
+    <ul class="tasks">
+      <li>默认租户（演示机构）</li>
+      <li>admin 账号（密码 bcrypt 加密）</li>
+      <li>默认计费单价三条：report / copywriting / chat（tenant_id=0）</li>
+      <li>默认 Agent 配置（provider=coze，读 COZE_BOT_ID）</li>
+    </ul>
+    <h3>验证清单</h3>
+    <ul class="checks">
+      <li>migrate 无报错，11 张表生成（SHOW TABLES）</li>
+      <li>seed 后可查到：默认租户 / admin / 三条单价 / Agent 配置</li>
+      <li>point_prices 与 agent_configs 全局行 tenant_id = 0</li>
+      <li>point_ledger 的 uk_biz 唯一索引存在（幂等防线）</li>
+    </ul>
+  </section>
+
+  <!-- 阶段 2 -->
+  <section id="phase-2">
+    <h2>阶段 2：后端底座</h2>
+    <p class="subtitle">对应 plan.md 任务 1.2、1.4（第 1.2、5.1、5.2、5.3 节）</p>
+    <div class="meta">
+      <span class="badge todo">未开始</span>
+      <span class="pill">前置：阶段 1</span>
+      <span class="pill">提交：feat: 阶段2 后端底座与多租户中间件</span>
+    </div>
+    <h3>目标</h3>
+    <p>搭建 Express 分层骨架与多租户底座，核心是 Prisma 租户扩展——后续所有业务模块在此之上开发，租户隔离不依赖开发者自觉。</p>
+    <h3>任务分解</h3>
+    <h4>2.1 依赖与配置加载</h4>
+    <ul class="tasks">
+      <li>安装：express、pino、pino-http、zod、ioredis</li>
+      <li><code>src/config/env.ts</code>：dotenv 加载 + zod 校验（PORT / DB_* / REDIS_URL / JWT_SECRET / WX_* / COZE_*），校验失败立即退出</li>
+    </ul>
+    <h4>2.2 分层骨架</h4>
+<pre><code>src/
+├── config/env.ts
+├── middleware/          errorHandler / tenantMiddleware（auth、rbac 阶段 3 增加）
+├── modules/*/
+│   ├── *.routes.ts
+│   ├── *.controller.ts   薄层：zod 校验 + 调 service
+│   └── *.service.ts      唯一写业务的地方
+├── common/
+│   ├── prisma.ts         租户扩展实例
+│   ├── redis.ts
+│   ├── logger.ts         pino
+│   └── tenant-context.ts AsyncLocalStorage
+├── app.ts                Express 实例 + 中间件链
+└── main.ts               监听端口</code></pre>
+    <h4>2.3 统一响应与错误码</h4>
+    <ul class="tasks">
+      <li>成功 <code>{ code: 0, message: 'ok', data }</code>，失败 <code>{ code, message, data: null }</code></li>
+      <li>错误码常量定义进 packages/shared（40001/40003/40004/40404/40901/40902/50000/50901）</li>
+      <li>全局 errorHandler 兜底：未知错误统一 50000，日志记录堆栈</li>
+    </ul>
+    <h4>2.4 租户上下文（第 5.1/5.2 节）</h4>
+    <ul class="tasks">
+      <li><code>tenantStorage = new AsyncLocalStorage&lt;TenantContext&gt;()</code></li>
+      <li><code>getTenantContext()</code>：无上下文抛 TENANT_CONTEXT_MISSING（防越权查询漏网）</li>
+      <li>tenantMiddleware：解析 JWT payload，tenantStorage.run({ tenantId, userId, role }, next)</li>
+      <li>无效/无 token 放行，由后续 requireAuth 拦截返回 40001</li>
+    </ul>
+    <h4>2.5 Prisma 租户扩展（第 5.3 节，核心防串号机制）</h4>
+    <ul class="tasks">
+      <li>TENANT_MODELS 白名单八模型：users、classes、students、pointAccounts、pointLedger、aiLogs、knowledgeDocs、aiReports（不含全局表）</li>
+      <li>findMany/findFirst/count/update/delete 等：where 强制合并 AND tenantId</li>
+      <li>create/createMany：data 强制覆盖 tenantId</li>
+      <li>定时任务等无上下文场景放行（try-catch 捕获）</li>
+    </ul>
+    <h4>2.6 绕过测试（plan 任务 1.4）</h4>
+    <ul class="tasks">
+      <li>不带上下文直接查租户表，验证抛 TENANT_CONTEXT_MISSING</li>
+      <li>带上下文查询验证自动过滤 tenantId</li>
+    </ul>
+    <h3>验证清单</h3>
+    <ul class="checks">
+      <li>pnpm dev 启动，pino 日志正常输出</li>
+      <li>访问不存在路由返回统一 404 格式</li>
+      <li>无上下文查询租户表抛错</li>
+      <li>携带上下文查询自动注入 tenantId 过滤</li>
+    </ul>
+  </section>
+
+  <!-- 阶段 3 -->
+  <section id="phase-3">
+    <h2>阶段 3：鉴权模块</h2>
+    <p class="subtitle">对应 plan.md 任务 1.5（第 5.4、5.5 节）</p>
+    <div class="meta">
+      <span class="badge todo">未开始</span>
+      <span class="pill">前置：阶段 2</span>
+      <span class="pill">提交：feat: 阶段3 认证鉴权与RBAC</span>
+    </div>
+    <h3>目标</h3>
+    <p>双端登录（小程序微信 + 后台账号密码）、token 签发/刷新/吊销、RBAC 角色守卫。</p>
+    <h3>任务分解</h3>
+    <h4>3.1 auth.jwt.ts</h4>
+    <ul class="tasks">
+      <li>issueTokens：access 2h（含 type: 'access'）；refresh 7d（type: 'refresh'，防混用）</li>
+      <li>refresh 写 Redis <code>auth:refresh:{userId}</code> EX 7 天（登出即删，支持强制下线）</li>
+      <li>verifyAccessToken：校验签名 + type</li>
+    </ul>
+    <h4>3.2 小程序登录 POST /api/auth/wx-login</h4>
+    <ul class="tasks">
+      <li>code2session（WX_APPID / WX_SECRET）换 openid</li>
+      <li>查/建 user（role=parent，uk_tenant_openid 幂等）→ 签发 token</li>
+    </ul>
+    <h4>3.3 后台登录 POST /api/auth/admin-login</h4>
+    <ul class="tasks">
+      <li>账号密码 bcrypt verify，仅 admin / teacher 角色可登录</li>
+    </ul>
+    <h4>3.4 刷新与登出</h4>
+    <ul class="tasks">
+      <li>POST /api/auth/refresh：校验 refresh 有效且与 Redis 值一致（不一致即已吊销/被替换）→ 重新签发</li>
+      <li>POST /api/auth/logout：删 Redis key；GET /api/auth/me：当前用户信息</li>
+    </ul>
+    <h4>3.5 RBAC 守卫（第 5.4 节）</h4>
+    <ul class="tasks">
+      <li>requireRole(min)：角色等级 admin(3) &gt; teacher(2) &gt; parent(1)</li>
+      <li>未登录 40001；等级不足 40003</li>
+    </ul>
+    <h3>验证清单</h3>
+    <ul class="checks">
+      <li>admin-login 返回 access + refresh</li>
+      <li>/api/auth/me 带 token 正常；错 token 返回 40001</li>
+      <li>parent 角色访问 teacher 级接口返回 40003</li>
+      <li>logout 后旧 refresh 调 /refresh 失败</li>
+      <li>Redis 中可查到 auth:refresh:{userId}</li>
+    </ul>
+  </section>
+
+  <!-- 阶段 4 -->
+  <section id="phase-4">
+    <h2>阶段 4：积分核心</h2>
+    <p class="subtitle">对应 plan.md 任务 2.3-2.5（第 7 节）</p>
+    <div class="meta">
+      <span class="badge todo">未开始</span>
+      <span class="pill">前置：阶段 2</span>
+      <span class="pill">凭证：本地 Redis 即可</span>
+      <span class="pill">提交：feat: 阶段4 积分账本核心</span>
+    </div>
+    <h3>目标</h3>
+    <p>积分账本核心闭环：Lua 原子扣减（防超发）、余额缓存预热（防误判 0）、失败回滚、定时对账、充值与计价接口。本阶段全部本地可验证，不依赖 AI 服务。</p>
+    <h3>任务分解</h3>
+    <h4>4.1 Lua 脚本 scripts/lua/deduct_points.lua（第 7.2 节）</h4>
+    <ul class="tasks">
+      <li>KEYS[1] = points:balance:{tenantId}:{userId}；KEYS[2] = points:lock:{bizId}</li>
+      <li>EXISTS 幂等锁（返回 -2 重复）→ 余额校验（-1 不足）→ DECRBY + SET lock EX 300</li>
+    </ul>
+    <h4>4.2 points.service.ts（第 7.3 节）</h4>
+    <ul class="tasks">
+      <li>ensureBalanceLoaded：key 不存在时从 point_accounts 加载，SET NX 写入（防覆盖并发充值）</li>
+      <li>deductPoints：先预热再 redis.eval 执行 Lua</li>
+      <li>rollbackPoints：INCRBY 回滚 + rollback 反向流水（bizId = rollback:{原bizId}，不改原流水）</li>
+    </ul>
+    <h4>4.3 BullMQ 对账任务（每 1 分钟，第 7.5 节）</h4>
+    <ul class="tasks">
+      <li>SCAN MATCH points:balance:* 游标遍历（禁止 KEYS）</li>
+      <li>以流水聚合为准：不一致修复 Redis + 告警日志；upsert point_accounts</li>
+    </ul>
+    <h4>4.4 积分接口（第 8.5 节）</h4>
+    <table>
+      <tr><th>Method</th><th>Path</th><th>说明</th><th>角色</th></tr>
+      <tr><td>GET</td><td>/api/points/balance</td><td>查询机构积分余额</td><td>teacher</td></tr>
+      <tr><td>POST</td><td>/api/points/recharge</td><td>充值（INCRBY + recharge 流水）</td><td>admin</td></tr>
+      <tr><td>GET</td><td>/api/points/ledger</td><td>流水查询（分页）</td><td>teacher</td></tr>
+      <tr><td>GET</td><td>/api/points/prices</td><td>计费单价</td><td>teacher</td></tr>
+      <tr><td>POST</td><td>/api/points/prices/update</td><td>更新计费单价</td><td>admin</td></tr>
+    </table>
+    <h3>验证清单</h3>
+    <ul class="checks">
+      <li>100 并发同额扣减：终值 = 初值 - 100 x 单价，无超发</li>
+      <li>同 bizId 重复请求返回 40902（幂等锁生效）</li>
+      <li>余额不足返回 40901</li>
+      <li>删 Redis 余额 key 后扣减：预热生效，不误判为 0</li>
+      <li>先扣后回滚：rollback 流水生成，余额恢复</li>
+      <li>对账任务运行后 MySQL 与 Redis 一致</li>
+    </ul>
+  </section>
+
+  <!-- 阶段 5 -->
+  <section id="phase-5">
+    <h2>阶段 5：AI 中台</h2>
+    <p class="subtitle">对应 plan.md 任务 2.1、2.2（第 6 节）</p>
+    <div class="meta">
+      <span class="badge todo">未开始</span>
+      <span class="pill">前置：阶段 4</span>
+      <span class="pill">凭证：Coze API key + bot id</span>
+      <span class="pill">提交：feat: 阶段5 AI中台与SSE流式输出</span>
+    </div>
+    <h3>目标</h3>
+    <p>Provider 抽象（第三方可插拔）+ Coze 接入 + SSE 流式输出 + 计费闭环（扣减 → 生成 → 失败回滚）。</p>
+    <h3>任务分解</h3>
+    <h4>5.1 Provider 抽象与 Coze 实现</h4>
+    <ul class="tasks">
+      <li>provider.interface.ts：AiProvider（chat + chatStream）、AiChatParams、AiResult</li>
+      <li>CozeProvider（首选）：对接 Coze chat API，支持流式</li>
+      <li>预留 DifyProvider / OpenAIProvider 扩展位（本阶段只做 Coze）</li>
+      <li>读 agent_configs 按 agentType 路由 provider/bot_id（租户配置优先，0 为全局默认），在线切换无需发版</li>
+    </ul>
+    <h4>5.2 SSE 封装 modules/ai/sse.ts（第 6.2 节）</h4>
+    <ul class="tasks">
+      <li>响应头：text/event-stream、no-cache、X-Accel-Buffering: no</li>
+      <li>心跳：每 15s 写 : ping 防断连；数据事件 data: { type: 'chunk', content }</li>
+      <li>结束 event: done；异常 event: error；finally 清理定时器</li>
+    </ul>
+    <h4>5.3 AI 接口（第 8.3 节）</h4>
+    <table>
+      <tr><th>Method</th><th>Path</th><th>说明</th><th>角色</th></tr>
+      <tr><td>POST</td><td>/api/ai/chat</td><td>SSE 流式；stream=false 非流式</td><td>teacher</td></tr>
+      <tr><td>POST</td><td>/api/ai/report/generate</td><td>生成点评/报告（body 含 bizId）</td><td>teacher</td></tr>
+      <tr><td>POST</td><td>/api/ai/copywriting/generate</td><td>生成招生文案（body 含 bizId）</td><td>teacher</td></tr>
+      <tr><td>GET</td><td>/api/ai/logs</td><td>调用日志（分页/筛选）</td><td>admin</td></tr>
+      <tr><td>GET</td><td>/api/ai/agents</td><td>Agent 配置列表</td><td>admin</td></tr>
+      <tr><td>POST</td><td>/api/ai/agents/update</td><td>更新配置</td><td>admin</td></tr>
+    </table>
+    <div class="note"><b>bizId 规则</b>：由前端生成（nanoid/uuid）随请求体传入，服务端不得自行生成——同一 bizId 重试只扣一次积分。</div>
+    <h4>5.4 计费闭环（第 6.4 节时序）</h4>
+    <ol class="tasks">
+      <li>查 point_prices 得单价</li>
+      <li>deductPoints(bizId)：不足 40901 / 重复 40902 直接返回</li>
+      <li>调 provider；成功：事务写 ai_logs + ai_reports</li>
+      <li>失败：rollbackPoints 回滚余额 + 写 rollback 流水</li>
+    </ol>
+    <h3>验证清单</h3>
+    <ul class="checks">
+      <li>curl -N 流式收到多个 chunk + done 事件</li>
+      <li>stream=false 返回完整 JSON</li>
+      <li>Coze key 配错时：积分自动回滚 + rollback 流水</li>
+      <li>重复 bizId 返回 40902，不重复扣费</li>
+      <li>ai_logs 记录 tokens / cost_points / duration_ms</li>
+      <li>后台改 agent_configs 无需重启即生效</li>
+    </ul>
+  </section>
+
+  <!-- 阶段 6 -->
+  <section id="phase-6">
+    <h2>阶段 6：业务闭环</h2>
+    <p class="subtitle">对应 plan.md 第 8.2、8.4 节接口 + 第 5.6 节数据权限</p>
+    <div class="meta">
+      <span class="badge todo">未开始</span>
+      <span class="pill">前置：阶段 5</span>
+      <span class="pill">提交：feat: 阶段6 业务模块与报告闭环</span>
+    </div>
+    <h3>目标</h3>
+    <p>机构/用户/班级/学员 CRUD + 报告模块（含家长行级过滤）+ AI 报告事务闭环 + 数据看板。本阶段完成后，后端 API 全部就绪。</p>
+    <h3>任务分解</h3>
+    <h4>6.1 机构与基础数据接口（第 8.2 节，全部写操作 POST）</h4>
+    <ul class="tasks">
+      <li>tenant info/update；user list/create/update/delete；class list/create/update/delete；student list/create/update/delete</li>
+      <li>controller 层 zod 校验；service 层走 Prisma 租户扩展（tenantId 自动注入）</li>
+      <li>student 创建时关联 parent_user_id（家长绑定）</li>
+    </ul>
+    <h4>6.2 报告模块（第 8.4 节 + 第 5.6 节行级过滤）</h4>
+    <ul class="tasks">
+      <li>GET /api/report/list、GET /api/report/detail</li>
+      <li>核心安全规则：ctx.role === 'parent' 时强制 where.student = { parentUserId: ctx.userId }</li>
+      <li>防止家长 A 传家长 B 的 studentId 水平越权（RBAC 管不到行级，必须 service 强制过滤）</li>
+    </ul>
+    <h4>6.3 AI 报告事务闭环</h4>
+    <ul class="tasks">
+      <li>扣积分 → AI 生成 → 事务写三表：point_ledger（consume）/ ai_logs / ai_reports（status=1）</li>
+      <li>失败路径：rollbackPoints + ai_reports status=2</li>
+    </ul>
+    <h4>6.4 数据看板</h4>
+    <ul class="tasks">
+      <li>GET /api/dashboard/summary：调用次数、积分消耗趋势、活跃学员数</li>
+      <li>聚合走 ai_logs 的 idx_tenant_agent_time 复合索引</li>
+    </ul>
+    <h3>验证清单</h3>
+    <ul class="checks">
+      <li>一次报告生成：三表各新增一条记录，cost_points 数值一致</li>
+      <li>家长 A 用家长 B 的 studentId 查询：返回空，不泄露数据</li>
+      <li>parent 角色 token 只能调 8.4 节接口，调 8.2 接口返回 40003</li>
+      <li>看板聚合接口返回趋势数据</li>
+    </ul>
+  </section>
+
+  <!-- 阶段 7 -->
+  <section id="phase-7">
+    <h2>阶段 7：文件 + RAG 知识库</h2>
+    <p class="subtitle">对应 plan.md 任务 2.6、2.7（第 8.6 节）</p>
+    <div class="meta">
+      <span class="badge todo">未开始</span>
+      <span class="pill">前置：阶段 5</span>
+      <span class="pill">凭证：阿里云 OSS</span>
+      <span class="pill">提交：feat: 阶段7 文件上传与RAG知识库</span>
+    </div>
+    <h3>目标</h3>
+    <p>通用文件上传（multer → OSS）+ RAG 知识库对接（Coze/Dify 知识库 API），支撑机构私有知识检索。</p>
+    <h3>任务分解</h3>
+    <h4>7.1 通用文件上传</h4>
+    <ul class="tasks">
+      <li>ali-oss SDK + multer；POST /api/file/upload（teacher）：图片 / PDF / Word</li>
+      <li>OSS key 规则：{tenantId}/{yyyyMM}/{nanoid}{ext}，返回签名 URL</li>
+      <li>文件类型与大小校验（zod + mimetype 白名单）</li>
+    </ul>
+    <h4>7.2 RAG 知识库对接</h4>
+    <ul class="tasks">
+      <li>POST /api/knowledge/upload（admin）：OSS 存储 → 调第三方知识库 API → document_id 入库（status=0 待处理）</li>
+      <li>状态查询：轮询/回查第三方，更新 status=1 已索引 / 2 失败</li>
+    </ul>
+    <h4>7.3 管理接口</h4>
+    <ul class="tasks">
+      <li>GET /api/knowledge/list（含状态）；POST /api/knowledge/delete（同步清理第三方）</li>
+    </ul>
+    <h3>验证清单</h3>
+    <ul class="checks">
+      <li>上传 PDF：OSS 可访问，knowledge_docs 生成记录</li>
+      <li>状态流转：待处理 → 已索引（或失败可查原因）</li>
+      <li>AI 对话能引用知识库内容回答（RAG 生效）</li>
+      <li>删除后列表移除，第三方同步清理</li>
+    </ul>
+  </section>
+
+  <!-- 阶段 8 -->
+  <section id="phase-8">
+    <h2>阶段 8：Web 管理后台</h2>
+    <p class="subtitle">对应 plan.md 第 3 周任务 3.1-3.6</p>
+    <div class="meta">
+      <span class="badge todo">未开始</span>
+      <span class="pill">前置：阶段 6</span>
+      <span class="pill">提交：feat: 阶段8 Web管理后台</span>
+    </div>
+    <h3>目标</h3>
+    <p>机构端 Web 管理后台（Vue 3 + Element Plus），覆盖登录、基础数据管理、AI 经营助手（核心）、知识库、积分计费、看板。</p>
+    <h3>任务分解</h3>
+    <h4>8.1 脚手架（替换占位包）</h4>
+    <ul class="tasks">
+      <li>Vite + Vue 3 + TypeScript + Element Plus + Pinia + Vue Router</li>
+      <li>axios 封装：自动带 Bearer token；401 自动跳登录</li>
+      <li>引用 @artedu/shared 复用类型/错误码</li>
+    </ul>
+    <h4>8.2 登录与布局</h4>
+    <ul class="tasks">
+      <li>登录页（admin-login）+ 主布局（侧边栏 + 顶栏 + 面包屑）+ 路由守卫</li>
+      <li>token 过期自动 refresh</li>
+    </ul>
+    <h4>8.3 基础数据页面</h4>
+    <ul class="tasks">
+      <li>机构信息、老师账号管理、班级管理、学员档案（按班级/老师筛选，关联家长）</li>
+    </ul>
+    <h4>8.4 AI 经营助手（核心）</h4>
+    <ul class="tasks">
+      <li>AI 点评生成器：选学员 → 输入课堂表现 → 生成（SSE）→ 人工编辑 → 保存</li>
+      <li>AI 招生文案：一键复制；AI 对话：fetch + ReadableStream 打字机</li>
+      <li>关键：发起计费请求时前端生成 bizId（nanoid），重试复用同一 bizId</li>
+    </ul>
+    <h4>8.5 知识库管理</h4>
+    <ul class="tasks">
+      <li>文档拖拽上传（进度条）；状态标签（待处理/已索引/失败）</li>
+    </ul>
+    <h4>8.6 积分与看板</h4>
+    <ul class="tasks">
+      <li>余额、流水、充值、单价配置、Agent 配置（Prompt 在线编辑）、额度预警</li>
+      <li>ECharts 看板：调用次数、积分趋势、活跃学员</li>
+    </ul>
+    <h3>验证清单</h3>
+    <ul class="checks">
+      <li>浏览器全链路：登录 → 建班级/学员 → 生成点评（流式打字机）→ 查看积分扣减</li>
+      <li>401 自动跳登录；refresh 静默续期</li>
+      <li>AI 失败时提示积分已回滚</li>
+      <li>双击生成按钮不重复扣费（bizId 幂等）</li>
+    </ul>
+  </section>
+
+  <!-- 阶段 9 -->
+  <section id="phase-9">
+    <h2>阶段 9：微信小程序</h2>
+    <p class="subtitle">对应 plan.md 第 4 周任务 4.1-4.6（第 6.3 节 SSE 方案）</p>
+    <div class="meta">
+      <span class="badge todo">未开始</span>
+      <span class="pill">前置：阶段 6</span>
+      <span class="pill">凭证：微信 appid / secret</span>
+      <span class="pill">提交：feat: 阶段9 微信小程序</span>
+    </div>
+    <h3>目标</h3>
+    <p>家长/学员端微信小程序（uni-app + Vue 3）：登录、AI 对话（enableChunked 分块接收 SSE）、成长报告、积分中心。</p>
+    <h3>任务分解</h3>
+    <h4>9.1 脚手架（替换占位包）</h4>
+    <ul class="tasks">
+      <li>uni-app + Vue 3 + Pinia；manifest.json（appid、权限）</li>
+      <li>request 封装：token 自动携带、过期自动刷新</li>
+    </ul>
+    <h4>9.2 登录与首页</h4>
+    <ul class="tasks">
+      <li>wx.login 拿 code → /api/auth/wx-login 换 token</li>
+      <li>首页：机构介绍、AI 体验入口、积分余额、轮播图、快捷入口</li>
+    </ul>
+    <h4>9.3 AI 对话页（关键技术点）</h4>
+    <div class="note">
+      微信小程序不支持 EventSource，用 enableChunked 分块接收（基础库 &gt;= 2.20.1）：
+      uni.request({ enableChunked: true }) → task.onChunkReceived 中
+      buffer 累加 → 按 \n\n 切分（剩余留缓冲区）→ 跳过 : 开头心跳行 →
+      解析 data: { type: 'chunk', content } 追加渲染。
+    </div>
+    <ul class="tasks">
+      <li>聊天界面 + 打字机效果 + Markdown 渲染（towxml 或 mp-html）</li>
+      <li>低版本基础库降级 stream=false 非流式</li>
+      <li>发送消息携带前端生成的 bizId</li>
+    </ul>
+    <h4>9.4 AI 成长报告页</h4>
+    <ul class="tasks">
+      <li>孩子历史报告列表（后端已做 parent 行级过滤）；详情图文混排；分享微信群</li>
+    </ul>
+    <h4>9.5 积分中心 + 个人中心</h4>
+    <ul class="tasks">
+      <li>余额 + 流水；积分商城（展示 + 后台核销）</li>
+      <li>个人信息、学员绑定、设置</li>
+    </ul>
+    <h3>验证清单</h3>
+    <ul class="checks">
+      <li>微信开发者工具：登录 → AI 对话流式打字机 → 查看孩子报告</li>
+      <li>心跳行不渲染为正文</li>
+      <li>分块跨 SSE 事件边界时缓冲正确（无丢字/乱序）</li>
+      <li>网络重试同一 bizId 不重复扣费</li>
+    </ul>
+  </section>
+
+  <!-- 阶段 10 -->
+  <section id="phase-10">
+    <h2>阶段 10：联调与部署</h2>
+    <p class="subtitle">对应 plan.md 第 5 周任务 5.1-5.4、第 6 周任务 6.1-6.5（第 10 节部署方案）</p>
+    <div class="meta">
+      <span class="badge todo">未开始</span>
+      <span class="pill">前置：阶段 8、9</span>
+      <span class="pill">提交：chore: 阶段10 部署上线</span>
+    </div>
+    <h3>目标</h3>
+    <p>三端联调、安全排查、性能压测、Docker 化部署上线，交付真实客户试用。</p>
+    <h3>任务分解</h3>
+    <h4>10.1 端到端联调</h4>
+    <ul class="tasks">
+      <li>完整场景：机构配置 → 建班级/学员 → 老师生成点评（Web）→ 家长小程序查看</li>
+      <li>重点排查：多租户数据串号（租户扩展覆盖）、权限越界（家长行级过滤）、积分对账一致性</li>
+    </ul>
+    <h4>10.2 调优与压测</h4>
+    <ul class="tasks">
+      <li>Prompt 行业化（舞蹈/艺术教培：优点/改进建议/鼓励）</li>
+      <li>RAG 调优（chunk size、topK）</li>
+      <li>100+ 并发 SSE、积分扣减并发、慢查询优化</li>
+    </ul>
+    <h4>10.3 Docker 化（第 10 节方案）</h4>
+    <ul class="tasks">
+      <li>Dockerfile：server（Node 构建 + 运行）、admin（nginx 托管静态资源）</li>
+      <li>compose：mysql/redis healthcheck + restart: unless-stopped；server 依赖 service_healthy</li>
+      <li>Nginx：HTTPS + SSE 透传（proxy_buffering off、proxy_read_timeout 300s、http 1.1）</li>
+      <li>.env 容器网络：DB_HOST=mysql、REDIS_URL=redis://redis:6379</li>
+    </ul>
+    <h4>10.4 生产部署与交付</h4>
+    <ul class="tasks">
+      <li>域名、SSL 证书；小程序提审</li>
+      <li>种子客户租户创建、基础数据导入</li>
+      <li>操作手册；邀请 1-2 家真实机构试用并修复反馈</li>
+    </ul>
+    <h3>验证清单</h3>
+    <ul class="checks">
+      <li>docker compose up 一键启动全部服务（依赖健康就绪）</li>
+      <li>HTTPS 下 SSE 流式正常（无缓冲卡顿）</li>
+      <li>完整业务闭环在三个端跑通</li>
+      <li>小程序审核通过</li>
+      <li>真实客户试用反馈闭环</li>
+    </ul>
+  </section>
+
+  <!-- 执行纪律 -->
+  <section id="discipline">
+    <h2>执行纪律</h2>
+    <ol class="tasks">
+      <li><b>依赖顺序不可倒置</b>：schema 先于后端代码；鉴权先于业务；积分先于 AI 生成；后端稳定后再做前端。</li>
+      <li><b>每阶段一个 commit</b>，提交信息用 Conventional Commits（中文描述，如 feat: 阶段3 认证鉴权与RBAC）。</li>
+      <li><b>代码约束</b>（全程有效）：租户表查询必须走 Prisma 扩展；写操作全 POST；TS 严格模式；中文注释 + JSDoc；不实现多余的 fallback。</li>
+      <li><b>外部凭证就位点</b>：阶段 5 前备 Coze key、阶段 7 前备 OSS、阶段 9 前备微信 appid。</li>
+      <li>每完成一个阶段，更新 ROADMAP.md"阶段总览"的状态列与本页面状态标记。</li>
+    </ol>
+  </section>
+
+  <a class="backtop" href="#" title="返回顶部">^</a>
+</main>
+
+<script>
+  // 侧栏导航高亮：滚动到对应区块时激活
+  const links = document.querySelectorAll('#nav a');
+  const map = {};
+  links.forEach(a => { map[a.getAttribute('href').slice(1)] = a; });
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting && map[e.target.id]) {
+        links.forEach(a => a.classList.remove('active'));
+        map[e.target.id].classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  document.querySelectorAll('main section').forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
