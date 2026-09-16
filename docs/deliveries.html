@@ -37,6 +37,7 @@
   nav a.active { border-left-color: var(--primary); color: #fff; background: rgba(37,99,235,.18); }
   nav a .st { font-size: 11px; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
   nav a .st.done { background: #14532d; color: #86efac; }
+  nav a .st.part { background: #713f12; color: #fde047; }
   main { margin-left: 250px; padding: 44px 52px 80px; max-width: 1020px; }
   .doc-header { margin-bottom: 36px; }
   .doc-header h1 { font-size: 26px; margin-bottom: 10px; }
@@ -54,6 +55,7 @@
   .meta { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0 6px; }
   .badge { font-size: 12px; padding: 3px 12px; border-radius: 999px; font-weight: 500; }
   .badge.done { background: #dcfce7; color: #166534; }
+  .badge.part { background: #fef9c3; color: #854d0e; }
   .pill {
     font-size: 12px; padding: 3px 12px; border-radius: 999px;
     background: #f8fafc; border: 1px solid var(--border); color: #475569;
@@ -127,6 +129,7 @@
     <a href="#d2">阶段 2 后端底座 <span class="st done">已完成</span></a>
     <a href="#d3">阶段 3 鉴权模块 <span class="st done">已完成</span></a>
     <a href="#d4">阶段 4 积分核心 <span class="st done">已完成</span></a>
+    <a href="#d6">阶段 6 业务闭环 <span class="st part">本地子集</span></a>
   </nav>
 </aside>
 
@@ -141,7 +144,7 @@
   <!-- 交付总览 -->
   <section id="overview">
     <h2>交付总览</h2>
-    <p class="subtitle">截至 2026-09-16，阶段 0-4 已完成，全部通过验证清单。</p>
+    <p class="subtitle">截至 2026-09-16，阶段 0-4 已完成（全部通过验证清单）；阶段 6 完成本地子集（6.3 AI 报告闭环待阶段 5）。</p>
     <table>
       <tr><th>阶段</th><th>名称</th><th>commit</th><th>验证结论</th><th>状态</th></tr>
       <tr><td>0</td><td>Monorepo 骨架</td><td><code>9a06bc3</code></td><td>pnpm -r build 全绿，hooks 生效</td><td>已完成</td></tr>
@@ -150,7 +153,7 @@
       <tr><td>3</td><td>鉴权模块</td><td><code>5405700</code></td><td>双 token / 刷新 / 吊销 / 40001 实测通过</td><td>已完成</td></tr>
       <tr><td>4</td><td>积分核心</td><td><code>3813465</code></td><td>100 并发无超发等 7 项验证全过</td><td>已完成</td></tr>
       <tr><td>5</td><td>AI 中台</td><td>-</td><td>前置：Coze API key + bot id</td><td>未开始</td></tr>
-      <tr><td>6</td><td>业务闭环</td><td>-</td><td>前置：阶段 5</td><td>未开始</td></tr>
+      <tr><td>6</td><td>业务闭环</td><td><code>269b2cc</code></td><td>本地子集 20 接口实测通过；6.3 待阶段 5</td><td>部分完成</td></tr>
       <tr><td>7</td><td>文件 + RAG</td><td>-</td><td>前置：OSS</td><td>未开始</td></tr>
       <tr><td>8</td><td>Web 管理后台</td><td>-</td><td>前置：阶段 6</td><td>未开始</td></tr>
       <tr><td>9</td><td>微信小程序</td><td>-</td><td>前置：微信 appid</td><td>未开始</td></tr>
@@ -291,6 +294,47 @@
     <h3>关键决策</h3>
     <div class="warn"><b>修复 plan.md 失败路径账目缺陷</b>：plan 6.4 中 consume 流水仅在 AI 成功时写入，失败路径只写 rollback 正向流水（+amount）而无对应负向流水——流水聚合比真实余额多出回滚金额，对账会把差额"修复"进 Redis，<b>每次 AI 失败都白送用户积分</b>（实测复现：真实余额 899 被修复为 949）。修复：rollbackPoints 回滚时先补写原扣减的 consume 流水（-amount，占住 uk_biz 幂等位），再写 rollback 反向流水，借贷相抵。</div>
     <div class="note"><b>BullMQ v6 API 适配</b>：Queue.add 已移除 repeat 选项，改用 upsertJobScheduler 注册每 60 秒对账任务。</div>
+  </section>
+
+  <!-- 阶段 6' -->
+  <section id="d6">
+    <h2>阶段 6'：业务闭环（本地子集）</h2>
+    <div class="meta">
+      <span class="badge part">部分完成：6.3 AI 报告闭环待阶段 5</span>
+      <span class="pill">commit：feat: 阶段6' 业务模块本地子集（269b2cc）</span>
+      <span class="pill">日期：2026-09-16</span>
+    </div>
+    <h3>背景</h3>
+    <p>阶段 5（Coze）/ 7（OSS）外部凭证未备，经依赖分析先行落地不依赖外部服务的本地子集：基础数据 CRUD（6.1）、报告查询（6.2）、数据看板（6.4）与 ai 模块纯 DB 接口（Agent 配置管理）；6.3 AI 报告闭环（扣积分 → AI 生成 → 三表落库）待阶段 5 完成后补齐。</p>
+    <h3>交付内容（20 个接口，写操作全 POST）</h3>
+    <table>
+      <tr><th>模块</th><th>接口</th><th>说明</th></tr>
+      <tr><td>tenant</td><td>GET /api/tenant；POST /api/tenant/update</td><td>机构信息查询（teacher）/ 更新 name、logo、contact（admin）；Tenant 全局表显式 tenantId 查询</td></tr>
+      <tr><td>user</td><td>GET /api/user/list；POST /api/user/create、/update、/delete</td><td>用户分页（role 筛选）/ 创建（bcrypt，仅 admin/teacher）/ 更新 / 软删 status=0；返回排除 password</td></tr>
+      <tr><td>class</td><td>GET /api/class/list；POST /api/class/create、/update、/delete</td><td>班级 CRUD；list 用 groupBy 统计每班学员数（schema 无 @relation，include 不可用）</td></tr>
+      <tr><td>student</td><td>GET /api/student/list；POST /api/student/create、/update、/delete</td><td>学员 CRUD；list 组装 className；classId/teacherId/parentUserId 支持传 null 清空关联</td></tr>
+      <tr><td>report</td><td>GET /api/report/list；GET /api/report/detail</td><td>报告分页（studentId 筛选）/ 详情（最低角色 parent）；parent 行级过滤</td></tr>
+      <tr><td>dashboard</td><td>GET /api/dashboard/summary</td><td>admin 聚合：学员数 / 班级数 / 本月报告数 / 本月积分消耗 / 近 7 日趋势</td></tr>
+      <tr><td>ai</td><td>GET /api/ai/agents；POST /api/ai/agents/update；GET /api/ai/logs</td><td>Agent 配置全局默认 + 租户自定义合并（isCustom）/ upsert 租户行 / 日志分页（agentType、status 筛选）</td></tr>
+    </table>
+    <h3>验证结果</h3>
+    <ul class="checks">
+      <li class="done">机构信息查询与更新：name / contact 修改生效</li>
+      <li class="done">班级 CRUD 全流程：创建 → list 返回 studentCount=1（groupBy 统计正确）→ 更新</li>
+      <li class="done">学员 CRUD：创建关联班级 → list 组装 className → 修正关联 → 更新</li>
+      <li class="done">用户创建：teacher 账号创建成功，返回数据不含 password</li>
+      <li class="done">parent 越权拦截（补验阶段 3 遗留项）：调 user/list、student/list、dashboard/summary 均返回 403 40003</li>
+      <li class="done">parent 报告行级过滤：report/list 返回 200 空列表；传他人 studentId 查不到数据；detail 对非本人学员 403</li>
+      <li class="done">teacher 调 dashboard/summary 返回 403 40003（admin 专属）</li>
+      <li class="done">dashboard/summary：聚合统计与近 7 日趋势（reportTrend / consumeTrend）返回正常</li>
+      <li class="done">ai/agents：全局 3 行 + 租户自定义行合并，isCustom 标记正确；ai/logs 分页正常</li>
+      <li class="done">pnpm -r build 与 pnpm lint 全绿</li>
+    </ul>
+    <h3>关键决策</h3>
+    <div class="note"><b>软删实现</b>：phase-6 文档描述 deleted_at 字段与 schema 不符，遵循 schema 用既有 status=0 语义（不改动已完成的数据层）。</div>
+    <div class="note"><b>schema 无 @relation 关联</b>：Class/Student/AiReport 间无法 include，班级学员数用 groupBy(classId) + Map 组装，className/studentName 手动二次查询。</div>
+    <div class="note"><b>parent 行级过滤三分支</b>：传指定 studentId 时校验归属、否则限定其学员集合、无关联学员直接返回空，防止家长 A 传家长 B 的 studentId 水平越权（RBAC 管不到行级）。</div>
+    <div class="warn"><b>PowerShell 5.1 中文编码坑</b>：Invoke-RestMethod 发中文 body 默认非 UTF-8 会乱码入库，必须 UTF8.GetBytes($json) + Content-Type 含 charset=utf-8。</div>
   </section>
 
   <a class="backtop" href="#" title="返回顶部">&#8679;</a>

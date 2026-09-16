@@ -38,6 +38,7 @@
   nav a .st { font-size: 11px; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
   nav a .st.done { background: #14532d; color: #86efac; }
   nav a .st.todo { background: rgba(255,255,255,.12); color: #94a3b8; }
+  nav a .st.part { background: #713f12; color: #fde047; }
   main { margin-left: 250px; padding: 44px 52px 80px; max-width: 1020px; }
   .doc-header { margin-bottom: 36px; }
   .doc-header h1 { font-size: 26px; margin-bottom: 10px; }
@@ -136,7 +137,7 @@
     <a href="#phase-3">阶段 3 鉴权模块 <span class="st done">已完成</span></a>
     <a href="#phase-4">阶段 4 积分核心 <span class="st done">已完成</span></a>
     <a href="#phase-5">阶段 5 AI 中台 <span class="st todo">未开始</span></a>
-    <a href="#phase-6">阶段 6 业务闭环 <span class="st todo">未开始</span></a>
+    <a href="#phase-6">阶段 6 业务闭环 <span class="st part">本地子集</span></a>
     <a href="#phase-7">阶段 7 文件 + RAG <span class="st todo">未开始</span></a>
     <a href="#phase-8">阶段 8 Web 管理后台 <span class="st todo">未开始</span></a>
     <a href="#phase-9">阶段 9 微信小程序 <span class="st todo">未开始</span></a>
@@ -166,7 +167,7 @@
       <tr><td>3</td><td>鉴权模块</td><td>2</td><td>curl 登录拿 token，错 token 返回 40001</td><td>已完成</td></tr>
       <tr><td>4</td><td>积分核心</td><td>2</td><td>100 并发扣减不超发，同 bizId 只扣一次</td><td>已完成</td></tr>
       <tr><td>5</td><td>AI 中台</td><td>4</td><td>curl 收到 SSE chunk + done 事件</td><td>未开始</td></tr>
-      <tr><td>6</td><td>业务闭环</td><td>5</td><td>一次生成落三表记录；parent 越权被拦</td><td>未开始</td></tr>
+      <tr><td>6</td><td>业务闭环</td><td>5</td><td>一次生成落三表记录；parent 越权被拦</td><td>部分完成（本地子集）</td></tr>
       <tr><td>7</td><td>文件 + RAG</td><td>5</td><td>文档上传后 status 变"已索引"</td><td>未开始</td></tr>
       <tr><td>8</td><td>Web 管理后台</td><td>6</td><td>浏览器端到端可操作</td><td>未开始</td></tr>
       <tr><td>9</td><td>微信小程序</td><td>6</td><td>开发者工具跑通全链路</td><td>未开始</td></tr>

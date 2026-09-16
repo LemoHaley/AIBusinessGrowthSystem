@@ -148,4 +148,50 @@ HTTP 接口实测：登录 admin 后 balance=0 → recharge +100 → ledger 可�
 
 ---
 
+## 阶段 6'：业务闭环（本地子集）
+
+| 属性   | 值                                                               |
+| :----- | :--------------------------------------------------------------- |
+| 状态   | 部分完成（6.1/6.2/6.4 + ai 纯 DB 子集；6.3 AI 报告闭环待阶段 5） |
+| commit | `269b2cc` feat: 阶段6' 业务模块本地子集                          |
+| 日期   | 2026-09-16                                                       |
+
+### 背景
+
+阶段 5（Coze）/ 7（OSS）外部凭证未备，经依赖分析先行落地不依赖外部服务的本地子集：基础数据 CRUD（6.1）、报告查询（6.2）、数据看板（6.4）与 ai 模块纯 DB 接口（Agent 配置管理）；6.3 AI 报告闭环（扣积分 → AI 生成 → 三表落库）待阶段 5 完成后补齐。
+
+### 交付内容（20 个接口，写操作全 POST）
+
+| 模块      | 接口                                                              | 说明                                                                                                           |
+| :-------- | :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
+| tenant    | GET /api/tenant；POST /api/tenant/update                          | 机构信息查询（teacher）/ 更新 name、logo、contact（admin）；Tenant 全局表显式 tenantId 查询                    |
+| user      | GET /api/user/list；POST /api/user/create、/update、/delete       | 用户分页（role 筛选）/ 创建（bcrypt，仅 admin/teacher，家长走小程序）/ 更新 / 软删 status=0；返回排除 password |
+| class     | GET /api/class/list；POST /api/class/create、/update、/delete     | 班级 CRUD；list 用 groupBy 统计每班学员数（schema 无 @relation，include 不可用）                               |
+| student   | GET /api/student/list；POST /api/student/create、/update、/delete | 学员 CRUD；list 组装 className；classId/teacherId/parentUserId 支持传 null 清空关联                            |
+| report    | GET /api/report/list；GET /api/report/detail                      | 报告分页（studentId 筛选）/ 详情（最低角色 parent）；parent 行级过滤                                           |
+| dashboard | GET /api/dashboard/summary                                        | admin 聚合：学员数 / 班级数 / 本月报告数 / 本月积分消耗 / 近 7 日报告与消耗趋势                                |
+| ai        | GET /api/ai/agents；POST /api/ai/agents/update；GET /api/ai/logs  | Agent 配置全局默认 + 租户自定义合并（isCustom 标记）/ upsert 租户行 / 调用日志分页（agentType、status 筛选）   |
+
+### 验证结果
+
+- 机构信息查询与更新：name / contact 修改生效
+- 班级 CRUD 全流程：创建 → list 返回 studentCount=1（groupBy 统计正确）→ 更新
+- 学员 CRUD：创建关联班级 → list 组装 className → 修正关联 → 更新
+- 用户创建：teacher 账号创建成功，返回数据不含 password
+- **parent 越权拦截（补验阶段 3 遗留项）**：parent token 调 /api/user/list、/api/student/list、/api/dashboard/summary 均返回 403 40003
+- **parent 报告行级过滤**：parent token 调 /api/report/list 返回 200 空列表（无关联学员时）；传他人 studentId 查不到数据；/api/report/detail 对非本人学员返回 403
+- teacher 调 /api/dashboard/summary 返回 403 40003（admin 专属）
+- dashboard/summary：聚合统计与近 7 日趋势（reportTrend / consumeTrend）返回正常
+- ai/agents：全局 3 行 + 租户自定义行合并，isCustom 标记正确；ai/logs 分页返回正常
+- `pnpm -r build` 与 `pnpm lint` 全绿
+
+### 关键决策
+
+1. **软删实现**：phase-6 文档描述 deleted_at 字段与 schema 不符，遵循 schema 用既有 status=0 语义（不改动已完成的数据层）
+2. **schema 无 @relation 关联**：Class/Student/AiReport 间无法 include，班级学员数用 groupBy(classId) + Map 组装，className/studentName 手动二次查询
+3. **parent 行级过滤三分支**：传指定 studentId 时校验归属、否则限定其学员集合、无关联学员直接返回空，防止家长 A 传家长 B 的 studentId 水平越权（RBAC 管不到行级）
+4. **PowerShell 5.1 中文编码坑**：Invoke-RestMethod 发中文 body 默认非 UTF-8 会乱码入库，必须 [System.Text.Encoding]::UTF8.GetBytes($json) + Content-Type 含 charset=utf-8
+
+---
+
 > 后续阶段（5-10）完成时按相同结构追加：目标 / 交付内容 / 验证结果 / 关键决策。
