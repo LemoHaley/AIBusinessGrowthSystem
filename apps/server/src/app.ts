@@ -11,6 +11,12 @@ import { errorHandler, notFoundHandler } from './middleware/error-handler.js';
 import { authRoutes } from './modules/auth/auth.routes.js';
 import { healthRoutes } from './modules/health/health.routes.js';
 import { pointsRoutes } from './modules/points/points.routes.js';
+import { tenantRoutes } from './modules/tenant/tenant.routes.js';
+import { userRoutes } from './modules/user/user.routes.js';
+import { classRoutes, studentRoutes } from './modules/student/student.routes.js';
+import { reportRoutes } from './modules/report/report.routes.js';
+import { dashboardRoutes } from './modules/dashboard/dashboard.routes.js';
+import { aiRoutes } from './modules/ai/ai.routes.js';
 
 export function createApp(): Express {
   const app = express();
@@ -23,6 +29,14 @@ export function createApp(): Express {
   app.use('/api/health', healthRoutes);
   app.use('/api/auth', authRoutes);
   app.use('/api/points', pointsRoutes);
+  // 阶段 6'（本地子集）：业务闭环 + 看板 + AI 配置（AI 调用本体属阶段 5）
+  app.use('/api/tenant', tenantRoutes);
+  app.use('/api/user', userRoutes);
+  app.use('/api/class', classRoutes);
+  app.use('/api/student', studentRoutes);
+  app.use('/api/report', reportRoutes);
+  app.use('/api/dashboard', dashboardRoutes);
+  app.use('/api/ai', aiRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
