@@ -161,6 +161,34 @@ export async function rechargePoints(params: {
   return balance;
 }
 
+/**
+ * 记录消费流水（plan.md 第 6.4 节 AI 成功路径）
+ * deductPoints 只做 Redis 原子扣减与幂等锁，成功的 consume 流水由调用方在 AI 成功后补写，
+ * 占用 (tenantId,bizId,consume) 的 uk_biz 唯一约束位，作为幂等的数据库最后防线。
+ * @param balanceAfter 扣减后余额快照（deductPoints 的返回值）
+ */
+export async function recordConsume(params: {
+  userId: bigint;
+  amount: number;
+  bizId: string;
+  bizType: string;
+  balanceAfter: number;
+}): Promise<void> {
+  const { tenantId } = getTenantContext();
+  await prisma.pointLedger.create({
+    data: {
+      tenantId,
+      userId: params.userId,
+      changeType: 'consume',
+      changeAmount: -params.amount, // 负数减少
+      balanceAfter: params.balanceAfter,
+      bizId: params.bizId,
+      bizType: params.bizType,
+      remark: 'AI 调用消耗',
+    },
+  });
+}
+
 /** 查询 Redis 中的当前余额（先预热，保证 key 存在） */
 export async function getBalance(userId: bigint): Promise<number> {
   const { tenantId } = getTenantContext();

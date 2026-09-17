@@ -20,6 +20,12 @@ const envSchema = z.object({
   /** Coze AI 服务凭证 */
   COZE_API_KEY: z.string().min(1, '缺少 COZE_API_KEY'),
   COZE_BOT_ID: z.string().min(1, '缺少 COZE_BOT_ID'),
+  /** OpenAI 兼容服务密钥（OpenAI/DeepSeek/自建网关）；未配置时 AI 调用返回明确错误 */
+  OPENAI_API_KEY: z.string().optional().default(''),
+  /** OpenAI 兼容服务基础地址（不带末尾斜杠） */
+  OPENAI_BASE_URL: z.string().optional().default('https://api.openai.com/v1'),
+  /** OpenAI 兼容默认模型（agent_configs.model 为空时兜底） */
+  OPENAI_MODEL: z.string().optional().default('gpt-4o-mini'),
 });
 
 const parsed = envSchema.safeParse(process.env);

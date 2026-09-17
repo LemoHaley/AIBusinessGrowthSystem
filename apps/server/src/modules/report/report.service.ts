@@ -3,6 +3,7 @@
  * parent 只能看自己孩子的报告（行级过滤）；teacher/admin 看全租户
  * AiReport 在租户扩展白名单内；schema 未定义 AiReport->Student 关联，学员名手动组装
  */
+import { ERROR_CODES } from '@artedu/shared';
 import { prisma } from '../../common/prisma.js';
 import { ApiError } from '../../common/response.js';
 import { getTenantContext } from '../../common/tenant-context.js';
@@ -81,4 +82,16 @@ async function getReportDetail(id: bigint) {
   return report;
 }
 
-export const reportService = { listReports, getReportDetail };
+/** 保存人工编辑后的报告内容（AI 生成后老师可修改再保存；租户扩展自动限定本租户） */
+async function saveReportContent(id: bigint, content: string) {
+  const existing = await prisma.aiReport.findUnique({ where: { id } });
+  if (!existing) {
+    throw new ApiError(ERROR_CODES.NOT_FOUND, '报告不存在', 404);
+  }
+  return await prisma.aiReport.update({
+    where: { id },
+    data: { content, status: 1 },
+  });
+}
+
+export const reportService = { listReports, getReportDetail, saveReportContent };

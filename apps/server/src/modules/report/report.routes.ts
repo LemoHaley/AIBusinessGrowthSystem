@@ -14,3 +14,6 @@ reportRoutes.get('/list', requireRole('parent'), asyncHandler(reportController.l
 
 // 报告详情
 reportRoutes.get('/detail', requireRole('parent'), asyncHandler(reportController.detail));
+
+// 保存人工编辑后的报告内容（老师/管理员）
+reportRoutes.post('/save', requireRole('teacher'), asyncHandler(reportController.save));
